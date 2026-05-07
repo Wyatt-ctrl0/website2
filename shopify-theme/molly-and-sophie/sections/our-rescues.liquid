@@ -1,0 +1,60 @@
+<section class="rescues" data-testid="our-rescues">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Meet The Pack</span>
+      <h2>{{ section.settings.heading | default: 'Three rescues. <em>One mission.</em>' }}</h2>
+      <p>{{ section.settings.subheading | default: 'These three goofballs are the heart of everything we do — they inspired our shop and remind us every day why rescues matter.' }}</p>
+    </div>
+
+    <div class="rescues-grid">
+      {%- for block in section.blocks -%}
+        <div class="rescue-card" data-testid="rescue-card-{{ block.settings.name | handleize }}">
+          <div class="rescue-photo">
+            {%- if block.settings.image != blank -%}
+              <img src="{{ block.settings.image | image_url: width: 360 }}" alt="{{ block.settings.name }}">
+            {%- else -%}
+              <img src="{{ block.settings.fallback_url }}" alt="{{ block.settings.name }}">
+            {%- endif -%}
+          </div>
+          <h3>{{ block.settings.name }}</h3>
+          <div class="role">{{ block.settings.role }}</div>
+          <p>{{ block.settings.bio }}</p>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Our Rescues",
+  "max_blocks": 6,
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Three rescues. <em>One mission.</em>" },
+    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "These three goofballs are the heart of everything we do — they inspired our shop and remind us every day why rescues matter." }
+  ],
+  "blocks": [
+    {
+      "type": "rescue",
+      "name": "Rescue",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Photo" },
+        { "type": "text", "id": "fallback_url", "label": "Fallback image URL" },
+        { "type": "text", "id": "name", "label": "Name", "default": "Rescue Name" },
+        { "type": "text", "id": "role", "label": "Role / nickname", "default": "The cuddle bug" },
+        { "type": "textarea", "id": "bio", "label": "Bio", "default": "A short story about this rescue." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Our Rescues",
+      "blocks": [
+        { "type": "rescue", "settings": { "name": "Jack", "role": "The Old Soul", "bio": "Our scruffy little gentleman with the wisest eyes. Jack came to us scared and unsure — now he's the calmest member of the pack and an expert sunbeam-finder.", "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/q86lwpgi_IMG_1473.jpg" }},
+        { "type": "rescue", "settings": { "name": "Sophie", "role": "The Fluffy Diplomat", "bio": "Sophie greets everyone — human or pup — like they are her best friend. Her oversized heart and goofy curls inspire everything we do at the shop.", "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/g2hrd7bt_IMG_9494.jpg" }},
+        { "type": "rescue", "settings": { "name": "Molly", "role": "The Sunshine", "bio": "Pure smiles, pink harnesses, and zoomies on demand. Molly was the puppy that turned our love for rescues into a real mission.", "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/yvrv5cn8_IMG_9662.jpg" }}
+      ]
+    }
+  ]
+}
+{% endschema %}

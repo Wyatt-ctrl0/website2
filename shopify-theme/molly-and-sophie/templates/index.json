@@ -1,0 +1,54 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "heading": "Treats, toys & love for the <em>whole pack</em>",
+        "subheading": "Curated pet essentials inspired by three rescue pups. Every wag, woof, and order helps fund animal rescues we love.",
+        "cta_text": "Shop the Pack",
+        "cta_link": "/collections/all",
+        "badge_text": "1% to Pet Rescues 🐾"
+      }
+    },
+    "categories": {
+      "type": "featured-categories",
+      "blocks": {
+        "b1": { "type": "category", "settings": { "title": "Dog Treats", "emoji": "🦴", "link": "/collections/dog-treats" } },
+        "b2": { "type": "category", "settings": { "title": "Cozy Beds", "emoji": "🛏️", "link": "/collections/beds" } },
+        "b3": { "type": "category", "settings": { "title": "Toys & Play", "emoji": "🎾", "link": "/collections/toys" } },
+        "b4": { "type": "category", "settings": { "title": "Cat Corner", "emoji": "🐱", "link": "/collections/cats" } }
+      },
+      "block_order": ["b1","b2","b3","b4"]
+    },
+    "featured": {
+      "type": "featured-collection",
+      "settings": {
+        "eyebrow": "Best Sellers",
+        "heading": "Tail-wagging <em>favorites</em>",
+        "subheading": "Hand-picked goodies our pack approves of.",
+        "limit": 8,
+        "show_view_all": true
+      }
+    },
+    "rescues": {
+      "type": "our-rescues",
+      "blocks": {
+        "jack": { "type": "rescue", "settings": { "name": "Jack", "role": "The Old Soul", "bio": "Our scruffy little gentleman with the wisest eyes. Jack came to us scared and unsure — now he's the calmest member of the pack and an expert sunbeam-finder.", "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/q86lwpgi_IMG_1473.jpg" } },
+        "sophie": { "type": "rescue", "settings": { "name": "Sophie", "role": "The Fluffy Diplomat", "bio": "Sophie greets everyone — human or pup — like they are her best friend. Her oversized heart and goofy curls inspire everything we do at the shop.", "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/g2hrd7bt_IMG_9494.jpg" } },
+        "molly": { "type": "rescue", "settings": { "name": "Molly", "role": "The Sunshine", "bio": "Pure smiles, pink harnesses, and zoomies on demand. Molly was the puppy that turned our love for rescues into a real mission.", "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/yvrv5cn8_IMG_9662.jpg" } }
+      },
+      "block_order": ["jack","sophie","molly"]
+    },
+    "donation": { "type": "donation-banner", "settings": {} },
+    "testimonials": {
+      "type": "testimonials",
+      "blocks": {
+        "r1": { "type": "review", "settings": { "text": "Salmon treats are a HIT in my house. Bonus points for the cute packaging and the donation to rescues!", "author": "Sarah M.", "pet": "Mom of Biscuit, Golden Retriever" } },
+        "r2": { "type": "review", "settings": { "text": "Such warm, thoughtful packaging. You can tell real pet parents are behind this brand. Will absolutely reorder.", "author": "Marcus T.", "pet": "Dad of Olive, Tabby Cat" } },
+        "r3": { "type": "review", "settings": { "text": "Knowing 1% goes to rescues makes every purchase feel meaningful. Plus, the harness fits my pup perfectly!", "author": "Priya K.", "pet": "Mom of Toby, Mini Schnauzer" } }
+      },
+      "block_order": ["r1","r2","r3"]
+    }
+  },
+  "order": ["hero","categories","featured","rescues","donation","testimonials"]
+}

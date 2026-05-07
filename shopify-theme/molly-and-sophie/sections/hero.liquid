@@ -1,0 +1,43 @@
+<section class="hero" data-testid="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="fade-up">
+        <span class="hero-eyebrow">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 4a4 4 0 0 1 4 4v.5l4 1.5v3l-3-1v9a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-3a2 2 0 0 0-4 0v3a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V8l4-1.5V8a4 4 0 0 1 4-4z" transform="translate(2 2)"/></svg>
+          Family-run since 2024
+        </span>
+        <h1>{{ section.settings.heading | default: 'Treats, toys & love for the <em>whole pack</em>' }}</h1>
+        <p>{{ section.settings.subheading | default: 'Curated pet essentials inspired by three rescue pups. Every wag, woof, and order helps fund animal rescues we love.' }}</p>
+        <div class="hero-cta">
+          <a href="{{ section.settings.cta_link | default: '/collections/all' }}" class="btn btn-primary" data-testid="hero-cta-shop">{{ section.settings.cta_text | default: 'Shop the Pack' }}</a>
+          <a href="/pages/about" class="btn btn-outline" data-testid="hero-cta-story">Our Story</a>
+        </div>
+      </div>
+      <div style="position: relative;" class="fade-up fade-up-delay-1">
+        <div class="hero-image-wrap">
+          {%- if section.settings.image != blank -%}
+            <img src="{{ section.settings.image | image_url: width: 800 }}" alt="Happy rescue dog">
+          {%- else -%}
+            <img src="https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/yvrv5cn8_IMG_9662.jpg" alt="Happy rescue puppy">
+          {%- endif -%}
+        </div>
+        <div class="hero-badge">{{ section.settings.badge_text | default: '1% to Pet Rescues 🐾' }}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Treats, toys & love for the <em>whole pack</em>" },
+    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "Curated pet essentials inspired by three rescue pups. Every wag, woof, and order helps fund animal rescues we love." },
+    { "type": "text", "id": "cta_text", "label": "Button text", "default": "Shop the Pack" },
+    { "type": "url", "id": "cta_link", "label": "Button link" },
+    { "type": "image_picker", "id": "image", "label": "Hero image" },
+    { "type": "text", "id": "badge_text", "label": "Badge text", "default": "1% to Pet Rescues 🐾" }
+  ],
+  "presets": [{ "name": "Hero" }]
+}
+{% endschema %}

@@ -1,0 +1,29 @@
+{
+  "current": "Default",
+  "presets": {
+    "Default": {
+      "color_primary": "#E8765A",
+      "color_secondary": "#5FB4B8",
+      "color_accent": "#1F2937",
+      "color_cream": "#F5EBD8",
+      "color_mint": "#B5D6CD",
+      "color_text": "#1F2937",
+      "color_background": "#FDF8EE",
+      "heading_font": "fraunces_n7",
+      "body_font": "nunito_n4",
+      "free_shipping_threshold": 50,
+      "promo_popup_enabled": true,
+      "promo_popup_title": "Welcome to the Pack",
+      "promo_popup_subtitle": "10% off your first order over $50",
+      "promo_popup_code": "WELCOME10",
+      "promo_popup_discount": "10% OFF",
+      "logo_text_part1": "Molly",
+      "logo_text_part2": "& Sophie",
+      "social_instagram": "https://instagram.com/shopmollyandsophie",
+      "social_facebook": "https://facebook.com/mollyandsophie",
+      "social_tiktok": "https://tiktok.com/@mollyandsophie",
+      "phone": "(570) 671-1534",
+      "email": "support@mollyandsophie.com"
+    }
+  }
+}

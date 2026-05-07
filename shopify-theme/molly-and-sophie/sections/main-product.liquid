@@ -1,0 +1,84 @@
+{%- assign product = product -%}
+
+<div class="product-page">
+  <div class="container">
+    <div class="product-grid-main">
+      <div class="product-gallery">
+        <div class="main-img">
+          {%- if product.featured_image != blank -%}
+            <img src="{{ product.featured_image | image_url: width: 800 }}" alt="{{ product.title }}" data-product-main-img>
+          {%- else -%}
+            <div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:6rem;background:var(--color-mint);">🐾</div>
+          {%- endif -%}
+        </div>
+        {%- if product.images.size > 1 -%}
+          <div class="product-thumbs">
+            {%- for img in product.images -%}
+              <button data-product-thumb data-img="{{ img | image_url: width: 800 }}" class="{% if forloop.first %}is-active{% endif %}" data-testid="product-thumb-{{ forloop.index }}">
+                <img src="{{ img | image_url: width: 160 }}" alt="">
+              </button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="product-details">
+        <div class="product-vendor">{{ product.vendor | default: 'Molly & Sophie' }}</div>
+        <h1 class="product-title" data-testid="product-title">{{ product.title }}</h1>
+
+        <div class="product-price" data-testid="product-price">
+          {%- if product.compare_at_price > product.price -%}
+            <span class="compare">{{ product.compare_at_price | money }}</span>
+          {%- endif -%}
+          {{ product.price | money }}
+        </div>
+
+        <div class="product-description">{{ product.description }}</div>
+
+        {%- form 'product', product, id: 'ProductForm' -%}
+          {%- unless product.has_only_default_variant -%}
+            {%- for option in product.options_with_values -%}
+              <div class="product-options">
+                <div class="option-label">{{ option.name }}</div>
+                <div class="option-values">
+                  {%- for value in option.values -%}
+                    <button type="button" class="option-value {% if forloop.first %}is-active{% endif %}" data-option-value data-option-group="{{ option.name }}" data-testid="option-{{ option.name | handleize }}-{{ value | handleize }}">{{ value }}</button>
+                  {%- endfor -%}
+                </div>
+              </div>
+            {%- endfor -%}
+          {%- endunless -%}
+
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+
+          <div class="product-quantity">
+            <div class="qty-control">
+              <button type="button" onclick="this.nextElementSibling.value=Math.max(1, parseInt(this.nextElementSibling.value)-1)">−</button>
+              <input type="number" name="quantity" value="1" min="1" data-testid="product-qty">
+              <button type="button" onclick="this.previousElementSibling.value=parseInt(this.previousElementSibling.value)+1">+</button>
+            </div>
+            <button type="submit" class="btn btn-primary" style="flex:1" data-testid="add-to-cart-btn">
+              {%- if product.available -%}Add to Cart · {{ product.price | money }}{%- else -%}Sold Out{%- endif -%}
+            </button>
+          </div>
+        {%- endform -%}
+
+        <div class="product-features">
+          <ul>
+            <li>Free shipping over $50</li>
+            <li>1% donated to pet rescues</li>
+            <li>Easy 30-day returns</li>
+            <li>Pet-parent approved</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product",
+  "settings": []
+}
+{% endschema %}

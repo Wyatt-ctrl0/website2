@@ -1,0 +1,29 @@
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <h1>Search</h1>
+      {%- form 'product', class: 'newsletter-form', style: 'max-width:540px;margin:1rem auto;' -%}
+        <input type="search" name="q" value="{{ search.terms }}" placeholder="Search products..." required>
+        <button type="submit" class="btn btn-primary">Search</button>
+      {%- endform -%}
+    </div>
+
+    {%- if search.performed -%}
+      <p class="text-center" style="color:rgba(31,41,55,0.6);">{{ search.results_count }} results for "{{ search.terms }}"</p>
+      {%- if search.results.size > 0 -%}
+        <div class="products-grid">
+          {%- for item in search.results -%}
+            {%- if item.object_type == 'product' -%}
+              {% render 'product-card', product: item %}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      {%- else -%}
+        <div style="text-align:center;padding:3rem;">
+          <p>No results. Try another search.</p>
+          <a href="/collections/all" class="btn btn-primary">Browse All</a>
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+</section>

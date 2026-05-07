@@ -1,0 +1,71 @@
+{%- if section.settings.show_announcement -%}
+<div class="announcement" data-testid="announcement-bar">
+  <div class="container">
+    {{ section.settings.announcement_text }}
+    {%- if section.settings.announcement_link != blank -%}
+      <a href="{{ section.settings.announcement_link }}">{{ section.settings.announcement_link_text }}</a>
+    {%- endif -%}
+  </div>
+</div>
+{%- endif -%}
+
+<header class="site-header" data-testid="site-header">
+  <div class="header-inner">
+    <button class="icon-btn mobile-menu-btn" data-mobile-nav-toggle data-testid="mobile-menu-toggle" aria-label="Open menu">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+
+    <nav class="header-nav" aria-label="Main">
+      <a href="/collections/all" data-testid="nav-shop">Shop All</a>
+      <a href="/collections/dogs" data-testid="nav-dogs">Dogs</a>
+      <a href="/collections/cats" data-testid="nav-cats">Cats</a>
+      <a href="/pages/about" data-testid="nav-about">Our Story</a>
+      <a href="/pages/contact" data-testid="nav-contact">Contact</a>
+    </nav>
+
+    <a href="/" class="header-logo" data-testid="header-logo">
+      {%- if settings.logo != blank -%}
+        <img src="{{ settings.logo | image_url: width: 240 }}" alt="{{ shop.name }}" width="120" height="60">
+      {%- else -%}
+        <span class="header-logo-text">{{ settings.logo_text_part1 | default: 'Molly' }}<span> {{ settings.logo_text_part2 | default: '& Sophie' }}</span></span>
+      {%- endif -%}
+    </a>
+
+    <div class="header-actions">
+      <a href="/account" class="icon-btn" data-testid="account-link" aria-label="Account">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </a>
+      <button class="icon-btn" data-cart-toggle data-testid="cart-toggle" aria-label="Open cart">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <span class="cart-count" data-cart-count data-testid="cart-count" data-count="{{ cart.item_count }}">{{ cart.item_count }}</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<aside class="mobile-nav" data-mobile-nav>
+  <button class="icon-btn mobile-nav-close" data-mobile-nav-close aria-label="Close menu">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <ul>
+    <li><a href="/collections/all">Shop All</a></li>
+    <li><a href="/collections/dogs">Dogs</a></li>
+    <li><a href="/collections/cats">Cats</a></li>
+    <li><a href="/pages/about">Our Story</a></li>
+    <li><a href="/pages/contact">Contact</a></li>
+    <li><a href="/account">Account</a></li>
+  </ul>
+</aside>
+<div class="mobile-nav-overlay" data-mobile-nav-overlay></div>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    { "type": "checkbox", "id": "show_announcement", "label": "Show announcement bar", "default": true },
+    { "type": "text", "id": "announcement_text", "label": "Announcement text", "default": "🐾 1% of every order goes to rescuing pets in need" },
+    { "type": "text", "id": "announcement_link_text", "label": "Link text", "default": "Learn more" },
+    { "type": "url", "id": "announcement_link", "label": "Link URL" }
+  ]
+}
+{% endschema %}

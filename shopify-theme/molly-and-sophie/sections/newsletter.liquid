@@ -1,0 +1,28 @@
+<section class="newsletter" data-testid="newsletter">
+  <div class="container">
+    <div class="newsletter-inner">
+      <span class="eyebrow" style="display:inline-block;font-family:var(--font-heading);font-size:0.85rem;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:var(--color-secondary);margin-bottom:1rem;">Keep In Touch</span>
+      <h2>{{ section.settings.heading | default: 'Treats, news &amp; <em>tail wags</em>' }}</h2>
+      <p>{{ section.settings.subheading | default: 'Sign up for first-dibs on new arrivals, exclusive promos, and rescue stories from the pack.' }}</p>
+
+      {%- form 'customer', class: 'newsletter-form', id: 'NewsletterForm' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        <input type="email" name="contact[email]" placeholder="your@email.com" aria-label="Email" required data-testid="newsletter-email">
+        <button type="submit" class="btn btn-primary" data-testid="newsletter-submit">Subscribe</button>
+      {%- endform -%}
+
+      <p class="newsletter-disclaimer">By signing up, you consent to receive updates, special offers, program communications and other information via email from us.</p>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Newsletter",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Treats, news &amp; <em>tail wags</em>" },
+    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "Sign up for first-dibs on new arrivals, exclusive promos, and rescue stories from the pack." }
+  ],
+  "presets": [{ "name": "Newsletter" }]
+}
+{% endschema %}

@@ -1,0 +1,24 @@
+<section class="thank-you" data-testid="thank-you-page">
+  <div class="container" style="max-width: 720px;">
+    <div class="icon-circle">🎉</div>
+    <h1>Thank you for <em>helping rescues</em>!</h1>
+    <p>Your order is in — and a portion of it is heading to pets in need. From our pack to yours, we can't thank you enough for shopping small and giving back.</p>
+
+    <div class="donation-callout">
+      <h3>1% of your order goes to:</h3>
+      <p style="margin:0;">The Humane Society of the Poconos — providing food, shelter, and medical care to pets waiting for their forever homes.</p>
+      <a href="https://humanepa.org/donate/" target="_blank" rel="noopener" class="btn btn-secondary mt-3" data-testid="thank-you-donate">Learn About Our Partner</a>
+    </div>
+
+    <p style="font-size:0.95rem;color:rgba(31,41,55,0.7);">A confirmation email is on its way. If you have questions, reach us anytime at <a href="mailto:{{ settings.email | default: 'support@mollyandsophie.com' }}">{{ settings.email | default: 'support@mollyandsophie.com' }}</a>.</p>
+
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:2rem;">
+      <a href="/collections/all" class="btn btn-primary" data-testid="thank-you-continue">Keep Shopping</a>
+      <a href="/pages/our-rescues" class="btn btn-outline" data-testid="thank-you-meet-pack">Meet Our Pack</a>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{ "name": "Thank You", "settings": [] }
+{% endschema %}

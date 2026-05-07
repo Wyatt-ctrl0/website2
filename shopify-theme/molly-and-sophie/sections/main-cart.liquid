@@ -1,0 +1,55 @@
+<section class="section" data-testid="cart-page">
+  <div class="container" style="max-width: 900px;">
+    <div class="section-head" style="text-align:left;">
+      <h1>Your Cart</h1>
+    </div>
+
+    {%- if cart.item_count > 0 -%}
+      {%- form 'cart', cart -%}
+        <div style="background:#fff;border-radius:24px;padding:1.5rem;">
+          {%- for item in cart.items -%}
+            <div class="cart-item" data-testid="cart-line-{{ forloop.index }}">
+              <div class="cart-item-image">
+                {%- if item.image != blank -%}
+                  <img src="{{ item.image | image_url: width: 200 }}" alt="{{ item.title }}">
+                {%- endif -%}
+              </div>
+              <div>
+                <h4 class="cart-item-title">{{ item.product.title }}</h4>
+                {%- unless item.product.has_only_default_variant -%}
+                  <div class="cart-item-variant">{{ item.variant.title }}</div>
+                {%- endunless -%}
+                <div class="cart-item-controls">
+                  <a href="{{ item.url_to_remove }}">−</a>
+                  <span class="qty">{{ item.quantity }}</span>
+                  <a href="/cart/change?line={{ forloop.index }}&quantity={{ item.quantity | plus: 1 }}">+</a>
+                </div>
+              </div>
+              <div>
+                <div class="cart-item-price">{{ item.final_line_price | money }}</div>
+              </div>
+            </div>
+          {%- endfor -%}
+
+          <div class="cart-totals" style="margin-top:1.5rem;padding-top:1rem;border-top:2px solid var(--color-cream);">
+            <div class="subtotal-label">Subtotal</div>
+            <div class="subtotal-value">{{ cart.total_price | money }}</div>
+          </div>
+
+          <button type="submit" name="checkout" class="btn btn-primary btn-block" data-testid="cart-checkout-btn">Checkout</button>
+        </div>
+      {%- endform -%}
+    {%- else -%}
+      <div style="text-align:center;padding:4rem 1rem;">
+        <div style="font-size:5rem;margin-bottom:1rem;">🐾</div>
+        <h2>Your cart is empty</h2>
+        <p>Looks like your pack is hungry for some goodies!</p>
+        <a href="/collections/all" class="btn btn-primary mt-2">Start Shopping</a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{ "name": "Cart", "settings": [] }
+{% endschema %}

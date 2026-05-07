@@ -1,0 +1,58 @@
+{
+  "summary": "Tested Molly & Sophie Shopify theme builder app (backend APIs + frontend Landing + /preview). All 9 backend pytest tests pass. Frontend landing page, all data-testids, download trigger, preview navigation, promo popup, cart drawer, free-shipping bar unlock at $50, valid/invalid promo codes all verified working. One UI bug found: clicking popup-copy throws an uncaught NotAllowedError because navigator.clipboard.writeText is denied in the iframe sandbox; the React dev error overlay then blocks subsequent interactions.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "ThemePreview - popup-copy",
+        "issue": "navigator.clipboard.writeText('WELCOME10') throws 'Write permission denied' (NotAllowedError) in cross-origin/iframe contexts. The error is uncaught (just `navigator.clipboard?.writeText('WELCOME10')` with optional chaining only guards against missing clipboard, NOT rejected promises). React dev overlay then covers the page and breaks all subsequent UI interactions. Wrap in try/catch or .catch(()=>{}), and add a fallback like document.execCommand('copy') or a hidden textarea selection.",
+        "selector": "[data-testid=\"popup-copy\"]",
+        "priority": "HIGH"
+      },
+      {
+        "component": "ThemePreview - newsletter form",
+        "issue": "Newsletter signup form on /preview just preventDefaults — never POSTs to /api/newsletter. The backend endpoint exists and works. Either wire the form to POST to ${API}/newsletter or document it as fully Klaviyo-side. Also no data-testid on the input/submit.",
+        "selector": "[data-testid=\"preview-newsletter\"] form",
+        "priority": "MEDIUM"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "ThemePreview footer socials",
+        "issues": ["Social icons render as plain 'IG/FB/TT' text circles with no links. Spec asked for instagram (shopmollyandsophie), facebook (mollyandsophie), tiktok (mollyandsophie.com). Add anchor tags with real handles."]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/backend_test.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Fix popup-copy: wrap navigator.clipboard.writeText in try/catch to swallow the iframe permission rejection; optionally fall back to a textarea+execCommand copy so the code actually copies inside the iframe.",
+    "Wire /preview newsletter form to POST to /api/newsletter (or remove pretense of working signup), and add data-testid attributes.",
+    "Replace placeholder IG/FB/TT footer chips with real social links to instagram.com/shopmollyandsophie, facebook.com/mollyandsophie, tiktok.com/@mollyandsophie.com."
+  ],
+  "critical_code_review_comments": [
+    "server.py uses subprocess to invoke `zip` binary — fine but brittle if container lacks zip. Consider Python's zipfile module for portability.",
+    "_rebuild_zip is sync inside async route — for small theme it's fine, but blocks the event loop. Fine for now given size.",
+    "navigator.clipboard?.writeText() with optional chaining does NOT prevent promise rejection; this is the root cause of the uncaught runtime error overlay.",
+    "ThemePreview.jsx is 458 lines and single-component — could be split into Header/Hero/Cart/Popup subcomponents (>700-line rule not yet violated)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/backend_test.py"
+  ],
+  "success_rate": {
+    "backend": "100% (9/9 pytest)",
+    "frontend": "~92% (all critical flows verified; popup-copy throws uncaught error)"
+  },
+  "test_credentials": "N/A - no auth in app",
+  "seed_data_creation": "None - tests use unique uuid emails for contact/newsletter; MongoDB collections contact_messages and newsletter_signups will accumulate TEST_ entries.",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend pytest at /app/backend/tests/backend_test.py covers all 5 API endpoints. Frontend landing page and /preview all data-testids present and verified. Re-test popup-copy after the clipboard fix is applied — the uncaught error must NOT surface; verify by clicking popup-copy and confirming no 'Uncaught runtime errors' overlay shows up and the button text changes to '✓ Copied!'.",
+  "rca of the issue": "popup-copy click bug RCA: In ThemePreview.jsx line 78, `navigator.clipboard?.writeText('WELCOME10')` returns a Promise. In sandboxed/iframe contexts (which this preview environment is) the Clipboard API rejects with NotAllowedError 'Write permission denied'. Optional chaining only protects against `navigator.clipboard` being undefined — it does NOT catch promise rejections. React dev mode then surfaces it as an uncaught runtime error overlay that covers the entire page, blocking all further interactions. Fix: `navigator.clipboard?.writeText('WELCOME10').catch(() => {})` or wrap in try/catch with a textarea+execCommand fallback for iframe copy."
+}

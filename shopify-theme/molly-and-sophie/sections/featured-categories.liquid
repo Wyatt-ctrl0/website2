@@ -1,0 +1,51 @@
+<section class="section" data-testid="featured-categories">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Shop by Pet</span>
+      <h2>{{ section.settings.heading | default: 'Find what makes them <em>wag</em>' }}</h2>
+      <p>{{ section.settings.subheading | default: 'From cozy beds to crunchy treats, we have everything for your best friend.' }}</p>
+    </div>
+
+    <div class="categories-grid">
+      {%- for block in section.blocks -%}
+        <a href="{{ block.settings.link | default: '/collections/all' }}" class="category-card bg-{{ forloop.index | modulo: 4 | plus: 1 }}" data-testid="category-{{ block.settings.title | handleize }}">
+          <div class="icon">{{ block.settings.emoji | default: '🐾' }}</div>
+          <h3>{{ block.settings.title }}</h3>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured Categories",
+  "max_blocks": 8,
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Find what makes them <em>wag</em>" },
+    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "From cozy beds to crunchy treats, we have everything for your best friend." }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Dog Treats" },
+        { "type": "text", "id": "emoji", "label": "Emoji icon", "default": "🦴" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Categories",
+      "blocks": [
+        { "type": "category", "settings": { "title": "Dog Treats", "emoji": "🦴" } },
+        { "type": "category", "settings": { "title": "Cozy Beds", "emoji": "🛏️" } },
+        { "type": "category", "settings": { "title": "Toys & Play", "emoji": "🎾" } },
+        { "type": "category", "settings": { "title": "Cat Corner", "emoji": "🐱" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
