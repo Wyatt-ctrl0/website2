@@ -1,36 +1,39 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Download, ShoppingBag, Search, User, Menu, X, ArrowLeft, Heart, Star, ChevronRight } from "lucide-react";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 const LOGO_URL = "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/qgnbhbs7_image.png";
 
-const RESCUE_IMG = {
+export const RESCUE_IMG = {
   jack: "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/q86lwpgi_IMG_1473.jpg",
   sophie: "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/g2hrd7bt_IMG_9494.jpg",
   molly: "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/yvrv5cn8_IMG_9662.jpg",
 };
 
 const PRODUCTS = [
-  { name: "Salmon Soft Treats", price: 14.99, emoji: "🦴", bg: "#ffe4d4", badge: "Bestseller" },
-  { name: "Cozy Donut Bed", price: 49.99, emoji: "🛏️", bg: "#d2efef" },
-  { name: "Squeaky Plush Carrot", price: 18.99, emoji: "🎾", bg: "#fce8da" },
-  { name: "Adventure Harness", price: 34.99, emoji: "🦮", bg: "#e8f0d4", badge: "New" },
-  { name: "Calming Chew Sticks", price: 22.99, emoji: "🌿", bg: "#ffe4d4" },
-  { name: "Catnip Mouse Trio", price: 12.99, emoji: "🐱", bg: "#d2efef" },
-  { name: "Premium Kibble Bowl", price: 26.99, emoji: "🥣", bg: "#fce8da" },
-  { name: "Plaid Travel Coat", price: 44.99, emoji: "🧥", bg: "#e8f0d4" },
+  { slug: "salmon-soft-treats", name: "Salmon Soft Treats", price: 14.99, compareAt: 19.99, emoji: "🦴", bg: "#ffe4d4", badge: "Bestseller", vendor: "Molly & Sophie", desc: "Slow-baked, soft, and irresistible. Made with real wild-caught salmon and zero junk — Jack approved." },
+  { slug: "cozy-donut-bed", name: "Cozy Donut Bed", price: 49.99, emoji: "🛏️", bg: "#d2efef", desc: "A plush, calming donut bed with raised edges for that secure 'I am safe and loved' feeling. Sophie's nightly choice." },
+  { slug: "squeaky-plush-carrot", name: "Squeaky Plush Carrot", price: 18.99, emoji: "🎾", bg: "#fce8da", desc: "Crinkles, squeaks, and survives at least three rounds of zoomies. Tested rigorously by Molly." },
+  { slug: "adventure-harness", name: "Adventure Harness", price: 34.99, emoji: "🦮", bg: "#e8f0d4", badge: "New", desc: "Padded, no-pull, comes in five colors. Great for hikes, casual sniff walks, and dramatic photo shoots." },
+  { slug: "calming-chew-sticks", name: "Calming Chew Sticks", price: 22.99, emoji: "🌿", bg: "#ffe4d4", desc: "Natural calming chews with chamomile and L-theanine. Perfect for vet visits, fireworks, and stressful Mondays." },
+  { slug: "premium-kibble-bowl", name: "Premium Kibble Bowl", price: 26.99, emoji: "🥣", bg: "#fce8da", desc: "Slow-feeder ceramic bowl that prevents gulping and looks gorgeous on your floor." },
+  { slug: "plaid-travel-coat", name: "Plaid Travel Coat", price: 44.99, emoji: "🧥", bg: "#e8f0d4", desc: "Water-resistant plaid coat with reflective trim. Because chilly walks deserve style." },
+  { slug: "salmon-jerky-bites", name: "Salmon Jerky Bites", price: 16.99, compareAt: 21.99, emoji: "🐟", bg: "#d2efef", desc: "High-protein single-ingredient training treats. Tiny pieces, big tail-wags." },
 ];
+
+export { PRODUCTS };
 
 const CATEGORIES = [
   { title: "Dog Treats", emoji: "🦴", bg: "#ffe4d4" },
   { title: "Cozy Beds", emoji: "🛏️", bg: "#d2efef" },
   { title: "Toys & Play", emoji: "🎾", bg: "#fce8da" },
-  { title: "Cat Corner", emoji: "🐱", bg: "#e8f0d4" },
+  { title: "Walks & Travel", emoji: "🦮", bg: "#e8f0d4" },
 ];
 
 export default function ThemePreview() {
+  const navigate = useNavigate();
   const [cartOpen, setCartOpen] = useState(false);
   const [popupOpen, setPopupOpen] = useState(true);
   const [cart, setCart] = useState([]);
@@ -141,9 +144,9 @@ export default function ThemePreview() {
         <div className="container" style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center", padding: "1rem", gap: "1rem" }}>
           <nav style={{ display: "flex", gap: "2rem", fontFamily: "var(--font-heading)", fontWeight: 600 }} className="hide-mobile">
             <a href="#shop" style={{ fontSize: "1rem" }}>Shop All</a>
-            <a href="#dogs" style={{ fontSize: "1rem" }}>Dogs</a>
-            <a href="#cats" style={{ fontSize: "1rem" }}>Cats</a>
+            <a href="#shop" style={{ fontSize: "1rem" }}>Dogs</a>
             <a href="#about" style={{ fontSize: "1rem" }}>Our Story</a>
+            <a href="#footer" style={{ fontSize: "1rem" }}>Contact</a>
           </nav>
           <a href="#" style={{ display: "flex", justifyContent: "center" }}>
             <img src={LOGO_URL} alt="Molly & Sophie" style={{ height: 64, width: "auto" }} />
@@ -167,7 +170,7 @@ export default function ThemePreview() {
           <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "3rem", alignItems: "center" }} className="hero-grid-md">
             <div>
               <span style={{ display: "inline-flex", alignItems: "center", gap: ".5rem", background: "var(--color-cream)", padding: ".4rem 1rem", borderRadius: 999, fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: ".85rem", marginBottom: "1.5rem" }}>
-                🐾 Family-run since 2024
+                🐾 Family-run with love
               </span>
               <h1 style={{ fontSize: "clamp(2.5rem, 6vw, 4.75rem)", marginBottom: "1.25rem" }}>
                 Treats, toys & love<br />for the <em>whole pack</em>
@@ -213,16 +216,20 @@ export default function ThemePreview() {
           <SectionHead eyebrow="Best Sellers" title={<>Tail-wagging <em>favorites</em></>} sub="Hand-picked goodies our pack approves of." />
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1.5rem" }}>
             {PRODUCTS.map((p, i) => (
-              <div key={i} style={{ background: "#fff", borderRadius: 24, overflow: "hidden", border: "2px solid transparent", transition: "all .25s ease", display: "flex", flexDirection: "column" }} className="product-card-hover" data-testid={`preview-product-${i}`}>
+              <div key={i} style={{ background: "#fff", borderRadius: 24, overflow: "hidden", border: "2px solid transparent", transition: "all .25s ease", display: "flex", flexDirection: "column", cursor: "pointer" }} className="product-card-hover" data-testid={`preview-product-${i}`} onClick={() => navigate(`/preview/product/${p.slug}`)}>
                 <div style={{ aspectRatio: "1", background: p.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "5rem", position: "relative" }}>
                   {p.emoji}
                   {p.badge && <span style={{ position: "absolute", top: "1rem", left: "1rem", background: "var(--color-primary)", color: "#fff", padding: ".35rem .75rem", borderRadius: 999, fontSize: ".75rem", fontWeight: 700, fontFamily: "var(--font-heading)" }}>{p.badge}</span>}
+                  {p.compareAt && <span style={{ position: "absolute", top: "1rem", right: "1rem", background: "var(--color-secondary)", color: "#fff", padding: ".35rem .75rem", borderRadius: 999, fontSize: ".75rem", fontWeight: 700, fontFamily: "var(--font-heading)" }}>SALE</span>}
                 </div>
                 <div style={{ padding: "1.25rem", flex: 1, display: "flex", flexDirection: "column" }}>
                   <div style={{ fontSize: ".75rem", textTransform: "uppercase", letterSpacing: ".1em", color: "var(--color-secondary)", fontWeight: 700, fontFamily: "var(--font-heading)", marginBottom: ".4rem" }}>Molly &amp; Sophie</div>
                   <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1.05rem", margin: "0 0 .5rem" }}>{p.name}</h3>
-                  <div style={{ fontWeight: 800, marginBottom: ".75rem" }}>${p.price.toFixed(2)}</div>
-                  <button onClick={() => addToCart(p)} className="btn btn-secondary" style={{ padding: ".55rem 1rem", fontSize: ".85rem", marginTop: "auto" }} data-testid={`preview-add-${i}`}>Add to Cart</button>
+                  <div style={{ marginBottom: ".75rem" }}>
+                    {p.compareAt && <span style={{ color: "rgba(31,41,55,0.5)", textDecoration: "line-through", marginRight: ".5rem", fontWeight: 500 }}>${p.compareAt.toFixed(2)}</span>}
+                    <span style={{ fontWeight: 800 }}>${p.price.toFixed(2)}</span>
+                  </div>
+                  <button onClick={(e) => { e.stopPropagation(); addToCart(p); }} className="btn btn-secondary" style={{ padding: ".55rem 1rem", fontSize: ".85rem", marginTop: "auto" }} data-testid={`preview-add-${i}`}>Add to Cart</button>
                 </div>
               </div>
             ))}
@@ -236,17 +243,18 @@ export default function ThemePreview() {
           <SectionHead eyebrow="Meet The Pack" title={<>Three rescues. <em>One mission.</em></>} sub="These three goofballs are the heart of everything we do." />
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "2rem", maxWidth: 1100, margin: "0 auto" }}>
             {[
-              { name: "Jack", role: "The Old Soul", img: RESCUE_IMG.jack, bio: "Our scruffy little gentleman with the wisest eyes. Now the calmest member of the pack." },
-              { name: "Sophie", role: "The Fluffy Diplomat", img: RESCUE_IMG.sophie, bio: "Greets everyone — human or pup — like they're her best friend. Pure goofy love." },
-              { name: "Molly", role: "The Sunshine", img: RESCUE_IMG.molly, bio: "Pure smiles, pink harnesses, and zoomies on demand. The pup that started it all." },
+              { name: "Jack", slug: "jack", role: "The Old Soul", img: RESCUE_IMG.jack, bio: "His previous owners traveled often for work and couldn't give him the attention he needed. Today, Jack is the calmest member of the pack." },
+              { name: "Sophie", slug: "sophie", role: "The Fluffy Diplomat", img: RESCUE_IMG.sophie, bio: "Sophie was left behind during quarantine. Their loss; our luckiest day. She greets everyone like a long-lost friend." },
+              { name: "Molly", slug: "molly", role: "The Sunshine", img: RESCUE_IMG.molly, bio: "Molly's first owners couldn't afford to care for her. Now she's pure goofy puppy joy and the reason this shop exists." },
             ].map((r) => (
-              <div key={r.name} style={{ textAlign: "center", background: "var(--color-bg)", padding: "2rem 1.5rem", borderRadius: 28, border: "3px dashed rgba(31,41,55,0.15)" }} className="hover-lift">
+              <div key={r.name} onClick={() => navigate(`/preview/dog/${r.slug}`)} style={{ textAlign: "center", background: "var(--color-bg)", padding: "2rem 1.5rem", borderRadius: 28, border: "3px dashed rgba(31,41,55,0.15)", cursor: "pointer" }} className="hover-lift" data-testid={`preview-rescue-card-${r.slug}`}>
                 <div style={{ width: 180, height: 180, margin: "0 auto 1.5rem", borderRadius: "50%", overflow: "hidden", border: "6px solid var(--color-mint)", boxShadow: "0 10px 25px -10px rgba(0,0,0,0.2)" }}>
                   <img src={r.img} alt={r.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                 </div>
                 <h3 style={{ fontSize: "2rem", color: "var(--color-primary)", marginBottom: ".5rem" }}>{r.name}</h3>
                 <div style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", color: "var(--color-secondary)", marginBottom: "1rem" }}>{r.role}</div>
                 <p style={{ color: "rgba(31,41,55,0.75)", fontSize: ".95rem", margin: 0 }}>{r.bio}</p>
+                <span style={{ display: "inline-block", marginTop: "1rem", fontFamily: "var(--font-heading)", fontWeight: 700, color: "var(--color-primary)", fontSize: ".95rem" }}>Read {r.name}'s story →</span>
               </div>
             ))}
           </div>
@@ -258,10 +266,10 @@ export default function ThemePreview() {
         <div className="container">
           <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "2rem", alignItems: "center" }} className="donation-grid-md">
             <div>
-              <h2 style={{ color: "#fff", margin: "0 0 .5rem" }}>1% of every order helps rescue pets.</h2>
-              <p style={{ color: "rgba(255,255,255,0.9)", margin: 0 }}>We partner with the Humane Society of the Poconos to fund food, shelter, and medical care.</p>
+              <h2 style={{ color: "#fff", margin: "0 0 .5rem" }}>1% of every order. Donated monthly.</h2>
+              <p style={{ color: "rgba(255,255,255,0.9)", margin: 0 }}>We're not affiliated with any single charity — every month, we hand-pick a trusted pet rescue and donate 1% of orders directly to them.</p>
             </div>
-            <a href="https://humanepa.org/donate/" target="_blank" rel="noreferrer" className="btn btn-light">Meet Our Partner</a>
+            <a href="#" className="btn btn-light">How It Works</a>
           </div>
         </div>
       </section>

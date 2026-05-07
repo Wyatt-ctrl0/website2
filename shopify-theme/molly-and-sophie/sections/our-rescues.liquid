@@ -8,7 +8,7 @@
 
     <div class="rescues-grid">
       {%- for block in section.blocks -%}
-        <div class="rescue-card" data-testid="rescue-card-{{ block.settings.name | handleize }}">
+        <a href="{{ block.settings.link | default: '#' }}" class="rescue-card" data-testid="rescue-card-{{ block.settings.name | handleize }}">
           <div class="rescue-photo">
             {%- if block.settings.image != blank -%}
               <img src="{{ block.settings.image | image_url: width: 360 }}" alt="{{ block.settings.name }}">
@@ -19,7 +19,8 @@
           <h3>{{ block.settings.name }}</h3>
           <div class="role">{{ block.settings.role }}</div>
           <p>{{ block.settings.bio }}</p>
-        </div>
+          <span class="rescue-link">Read {{ block.settings.name }}'s story →</span>
+        </a>
       {%- endfor -%}
     </div>
   </div>
@@ -42,7 +43,8 @@
         { "type": "text", "id": "fallback_url", "label": "Fallback image URL" },
         { "type": "text", "id": "name", "label": "Name", "default": "Rescue Name" },
         { "type": "text", "id": "role", "label": "Role / nickname", "default": "The cuddle bug" },
-        { "type": "textarea", "id": "bio", "label": "Bio", "default": "A short story about this rescue." }
+        { "type": "textarea", "id": "bio", "label": "Bio", "default": "A short story about this rescue." },
+        { "type": "url", "id": "link", "label": "Story page link" }
       ]
     }
   ],
@@ -50,9 +52,9 @@
     {
       "name": "Our Rescues",
       "blocks": [
-        { "type": "rescue", "settings": { "name": "Jack", "role": "The Old Soul", "bio": "Our scruffy little gentleman with the wisest eyes. Jack came to us scared and unsure — now he's the calmest member of the pack and an expert sunbeam-finder.", "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/q86lwpgi_IMG_1473.jpg" }},
-        { "type": "rescue", "settings": { "name": "Sophie", "role": "The Fluffy Diplomat", "bio": "Sophie greets everyone — human or pup — like they are her best friend. Her oversized heart and goofy curls inspire everything we do at the shop.", "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/g2hrd7bt_IMG_9494.jpg" }},
-        { "type": "rescue", "settings": { "name": "Molly", "role": "The Sunshine", "bio": "Pure smiles, pink harnesses, and zoomies on demand. Molly was the puppy that turned our love for rescues into a real mission.", "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/yvrv5cn8_IMG_9662.jpg" }}
+        { "type": "rescue", "settings": { "name": "Jack", "role": "The Old Soul", "bio": "His previous owners traveled often for work and couldn't give him the attention he needed. Today, Jack is the calmest member of the pack and an expert sunbeam-finder.", "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/q86lwpgi_IMG_1473.jpg", "link": "/pages/jack" }},
+        { "type": "rescue", "settings": { "name": "Sophie", "role": "The Fluffy Diplomat", "bio": "Sophie was left behind during quarantine — her previous family said they couldn't keep her. Their loss; our luckiest day. She greets everyone like a long-lost friend.", "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/g2hrd7bt_IMG_9494.jpg", "link": "/pages/sophie" }},
+        { "type": "rescue", "settings": { "name": "Molly", "role": "The Sunshine", "bio": "Molly's first owners couldn't afford to care for her. She came to us scared and unsure — now she's pure goofy puppy joy and the reason we started this shop.", "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/yvrv5cn8_IMG_9662.jpg", "link": "/pages/molly" }}
       ]
     }
   ]

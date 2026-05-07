@@ -1,0 +1,26 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-dog-story",
+      "settings": {
+        "dog_name": "Molly",
+        "dog_role": "The Sunshine",
+        "bg_color": "#fce8da",
+        "tagline": "She lost her first home to circumstance. She earned her second one in pure puppy joy.",
+        "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/yvrv5cn8_IMG_9662.jpg"
+      },
+      "blocks": {
+        "h1": { "type": "heading", "settings": { "text": "Where Molly came from" } },
+        "p1": { "type": "paragraph", "settings": { "text": "Molly's first family loved her — they just couldn't afford to keep her. Vet bills, food, time, everything a growing puppy needs — life had become too much, and they had to let her go. It happens more often than people realize. It doesn't make the goodbye any easier." } },
+        "p2": { "type": "paragraph", "settings": { "text": "When we picked her up, she was tiny, scared, and had no idea what was happening. She slept in our arms the whole drive home. She didn't have a name yet. She had no idea she was about to become the brightest part of this house." } },
+        "q1": { "type": "pullquote", "settings": { "text": "Molly is the reason this shop exists. Every order helps a pet whose family is doing their best — but needs a little help." } },
+        "h2": { "type": "heading", "settings": { "text": "Who Molly is now" } },
+        "p3": { "type": "paragraph", "settings": { "text": "Molly is loud, gold, and made entirely of zoomies. She wears a pink harness like she invented pink. She believes every blanket is a fort and every couch is a trampoline. She has decided that mornings are her best work." } },
+        "p4": { "type": "paragraph", "settings": { "text": "She's also the reason we put a name on the door. Because if a dog this good can lose her home through no fault of her own — then a small shop run from our living room can quietly chip away at the problem, one order at a time." } },
+        "ph1": { "type": "photo", "settings": { "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/yvrv5cn8_IMG_9662.jpg", "caption": "Molly's signature smile." } }
+      },
+      "block_order": ["h1","p1","p2","q1","h2","p3","p4","ph1"]
+    }
+  },
+  "order": ["main"]
+}

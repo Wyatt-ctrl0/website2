@@ -16,7 +16,7 @@
         "b1": { "type": "category", "settings": { "title": "Dog Treats", "emoji": "🦴", "link": "/collections/dog-treats" } },
         "b2": { "type": "category", "settings": { "title": "Cozy Beds", "emoji": "🛏️", "link": "/collections/beds" } },
         "b3": { "type": "category", "settings": { "title": "Toys & Play", "emoji": "🎾", "link": "/collections/toys" } },
-        "b4": { "type": "category", "settings": { "title": "Cat Corner", "emoji": "🐱", "link": "/collections/cats" } }
+        "b4": { "type": "category", "settings": { "title": "Walks & Travel", "emoji": "🦮", "link": "/collections/walks" } }
       },
       "block_order": ["b1","b2","b3","b4"]
     },
@@ -33,9 +33,9 @@
     "rescues": {
       "type": "our-rescues",
       "blocks": {
-        "jack": { "type": "rescue", "settings": { "name": "Jack", "role": "The Old Soul", "bio": "Our scruffy little gentleman with the wisest eyes. Jack came to us scared and unsure — now he's the calmest member of the pack and an expert sunbeam-finder.", "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/q86lwpgi_IMG_1473.jpg" } },
-        "sophie": { "type": "rescue", "settings": { "name": "Sophie", "role": "The Fluffy Diplomat", "bio": "Sophie greets everyone — human or pup — like they are her best friend. Her oversized heart and goofy curls inspire everything we do at the shop.", "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/g2hrd7bt_IMG_9494.jpg" } },
-        "molly": { "type": "rescue", "settings": { "name": "Molly", "role": "The Sunshine", "bio": "Pure smiles, pink harnesses, and zoomies on demand. Molly was the puppy that turned our love for rescues into a real mission.", "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/yvrv5cn8_IMG_9662.jpg" } }
+        "jack": { "type": "rescue", "settings": { "name": "Jack", "role": "The Old Soul", "bio": "His previous owners traveled often for work and couldn't give him the attention he needed. Today, Jack is the calmest member of the pack and an expert sunbeam-finder.", "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/q86lwpgi_IMG_1473.jpg", "link": "/pages/jack" } },
+        "sophie": { "type": "rescue", "settings": { "name": "Sophie", "role": "The Fluffy Diplomat", "bio": "Sophie was left behind during quarantine — her previous family said they couldn't keep her. Their loss; our luckiest day. She greets everyone like a long-lost friend.", "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/g2hrd7bt_IMG_9494.jpg", "link": "/pages/sophie" } },
+        "molly": { "type": "rescue", "settings": { "name": "Molly", "role": "The Sunshine", "bio": "Molly's first owners couldn't afford to care for her. She came to us scared and unsure — now she's pure goofy puppy joy and the reason we started this shop.", "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/yvrv5cn8_IMG_9662.jpg", "link": "/pages/molly" } }
       },
       "block_order": ["jack","sophie","molly"]
     },

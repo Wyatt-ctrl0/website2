@@ -125,16 +125,17 @@ export default function LandingPage() {
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "2rem", maxWidth: 900, margin: "0 auto" }}>
             {[
-              { name: "Jack", role: "The Old Soul", img: "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/q86lwpgi_IMG_1473.jpg" },
-              { name: "Sophie", role: "The Fluffy Diplomat", img: "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/g2hrd7bt_IMG_9494.jpg" },
-              { name: "Molly", role: "The Sunshine", img: "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/yvrv5cn8_IMG_9662.jpg" },
+              { name: "Jack", role: "The Old Soul", img: "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/q86lwpgi_IMG_1473.jpg", bio: "His previous owners traveled often and couldn't give him the attention he needed." },
+              { name: "Sophie", role: "The Fluffy Diplomat", img: "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/g2hrd7bt_IMG_9494.jpg", bio: "Left behind during quarantine — now the loudest welcome in the house." },
+              { name: "Molly", role: "The Sunshine", img: "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/yvrv5cn8_IMG_9662.jpg", bio: "Lost her first home when her family couldn't afford to care for her." },
             ].map((p) => (
               <div key={p.name} style={{ textAlign: "center", background: "var(--color-bg)", padding: "2rem 1.5rem", borderRadius: 28, border: "3px dashed rgba(31,41,55,0.15)" }} data-testid={`rescue-card-${p.name.toLowerCase()}`}>
                 <div style={{ width: 160, height: 160, margin: "0 auto 1.25rem", borderRadius: "50%", overflow: "hidden", border: "6px solid var(--color-mint)", boxShadow: "0 10px 25px -10px rgba(0,0,0,0.2)" }}>
                   <img src={p.img} alt={p.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                 </div>
                 <h3 style={{ fontSize: "1.75rem", color: "var(--color-primary)", marginBottom: ".25rem" }}>{p.name}</h3>
-                <div style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", color: "var(--color-secondary)" }}>{p.role}</div>
+                <div style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", color: "var(--color-secondary)", marginBottom: ".75rem" }}>{p.role}</div>
+                <p style={{ fontSize: ".9rem", color: "rgba(31,41,55,0.7)", margin: 0 }}>{p.bio}</p>
               </div>
             ))}
           </div>
@@ -212,10 +213,10 @@ export default function LandingPage() {
           <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "2rem", alignItems: "center", textAlign: "center" }}>
             <div>
               <Heart size={36} style={{ marginBottom: "1rem" }} />
-              <h2 style={{ color: "#fff", fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)" }}>1% of every order helps rescues</h2>
-              <p style={{ color: "rgba(255,255,255,0.9)", maxWidth: 580, margin: "0 auto 1.5rem" }}>The donation banner and Thank You page already point to the Humane Society of the Poconos — just like you asked.</p>
+              <h2 style={{ color: "#fff", fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)" }}>1% of every order. Donated monthly.</h2>
+              <p style={{ color: "rgba(255,255,255,0.9)", maxWidth: 580, margin: "0 auto 1.5rem" }}>You're not partnered with any single charity — every month, you hand-pick a trusted pet rescue and donate 1% of orders directly to them. The donation banner and Thank You page reflect that, just like you asked.</p>
               <a href="https://humanepa.org/donate/" target="_blank" rel="noopener noreferrer" className="btn btn-light" data-testid="donation-link">
-                Visit humanepa.org <ExternalLink size={16} />
+                Example: humanepa.org <ExternalLink size={16} />
               </a>
             </div>
           </div>

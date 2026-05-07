@@ -1,0 +1,26 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-dog-story",
+      "settings": {
+        "dog_name": "Sophie",
+        "dog_role": "The Fluffy Diplomat",
+        "bg_color": "#ffe4d4",
+        "tagline": "Left behind when the world went quiet — now the loudest welcome in the house.",
+        "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/g2hrd7bt_IMG_9494.jpg"
+      },
+      "blocks": {
+        "h1": { "type": "heading", "settings": { "text": "Where Sophie came from" } },
+        "p1": { "type": "paragraph", "settings": { "text": "Sophie's old life ended during quarantine. Her previous family decided they couldn't keep her — too much, too long, too uncertain — and she was left behind. Just like that. A dog who had been someone's whole world the week before, suddenly wasn't anyone's." } },
+        "p2": { "type": "paragraph", "settings": { "text": "When we met Sophie, she was anxious, attached, terrified of being left alone in any room. Closing a door behind us was a small heartbreak. She thought every goodbye was the last one." } },
+        "q1": { "type": "pullquote", "settings": { "text": "It took weeks for Sophie to believe we were really coming back. And once she did — she decided everyone in the world was her new best friend." } },
+        "h2": { "type": "heading", "settings": { "text": "Who Sophie is now" } },
+        "p3": { "type": "paragraph", "settings": { "text": "Sophie is, simply, a celebration. She greets every guest like they're family she hasn't seen in years. She wags her whole back end. She melts at the sound of someone saying her name. She has the kind of love that fills a room." } },
+        "p4": { "type": "paragraph", "settings": { "text": "Her old family's loss became our luckiest day. And every time we ship an order, a tiny piece of it goes back to dogs still waiting for a Sophie-sized welcome of their own." } },
+        "ph1": { "type": "photo", "settings": { "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/g2hrd7bt_IMG_9494.jpg", "caption": "Sophie at her favorite snack station." } }
+      },
+      "block_order": ["h1","p1","p2","q1","h2","p3","p4","ph1"]
+    }
+  },
+  "order": ["main"]
+}

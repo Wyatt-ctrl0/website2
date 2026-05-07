@@ -2,11 +2,11 @@
   <div class="container">
     <div class="donation-grid">
       <div>
-        <h2>{{ section.settings.heading | default: '1% of every order helps rescue pets.' }}</h2>
-        <p>{{ section.settings.subheading | default: 'We partner with the Humane Society of the Poconos to fund food, shelter, and medical care for animals waiting for their forever homes.' }}</p>
+        <h2>{{ section.settings.heading | default: '1% of every order. Donated monthly. To rescues we love.' }}</h2>
+        <p>{{ section.settings.subheading | default: 'We are not affiliated with any single charity — every month we hand-pick a trusted pet rescue and donate 1% of our orders directly to them. Real animals. Real impact.' }}</p>
       </div>
       <div>
-        <a href="{{ section.settings.button_link | default: 'https://humanepa.org/donate/' }}" target="_blank" rel="noopener" class="btn btn-primary" data-testid="donation-cta">{{ section.settings.button_text | default: 'Meet Our Partner' }}</a>
+        <a href="{{ section.settings.button_link | default: '/pages/giving-back' }}" class="btn btn-primary" data-testid="donation-cta">{{ section.settings.button_text | default: 'How It Works' }}</a>
       </div>
     </div>
   </div>
@@ -16,10 +16,10 @@
 {
   "name": "Donation Banner",
   "settings": [
-    { "type": "text", "id": "heading", "label": "Heading", "default": "1% of every order helps rescue pets." },
-    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "We partner with the Humane Society of the Poconos to fund food, shelter, and medical care for animals waiting for their forever homes." },
-    { "type": "text", "id": "button_text", "label": "Button text", "default": "Meet Our Partner" },
-    { "type": "url", "id": "button_link", "label": "Button link", "default": "https://humanepa.org/donate/" }
+    { "type": "text", "id": "heading", "label": "Heading", "default": "1% of every order. Donated monthly. To rescues we love." },
+    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "We are not affiliated with any single charity — every month we hand-pick a trusted pet rescue and donate 1% of our orders directly to them. Real animals. Real impact." },
+    { "type": "text", "id": "button_text", "label": "Button text", "default": "How It Works" },
+    { "type": "url", "id": "button_link", "label": "Button link", "default": "/pages/giving-back" }
   ],
   "presets": [{ "name": "Donation Banner" }]
 }
