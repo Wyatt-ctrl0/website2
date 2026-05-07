@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, ShoppingBag, Truck, RotateCcw, Heart, ChevronDown, X, ZoomIn, Ruler, FileText, Award, Flame } from "lucide-react";
 import { PRODUCTS, StarRating } from "./ThemePreview";
+import { useWishlist } from "../hooks/useWishlist";
 
 const LOGO_URL = "/img/logo.png";
 
@@ -32,6 +33,9 @@ export default function ProductDetail() {
   const [openAccordion, setOpenAccordion] = useState("love");
   const [adding, setAdding] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [pdpToast, setPdpToast] = useState(null);
+  const wishlist = useWishlist();
+  const liked = wishlist.has(product.slug);
   const otherProducts = PRODUCTS.filter((p) => p.slug !== product.slug).slice(0, 4);
   const specsRef = useRef(null);
   const specs = SPECS_BY_TYPE.default;
@@ -60,6 +64,12 @@ export default function ProductDetail() {
   const handleAdd = () => {
     setAdding(true);
     setTimeout(() => setAdding(false), 1200);
+  };
+
+  const handleWishlist = () => {
+    const wasAdded = wishlist.toggle(product.slug);
+    setPdpToast({ msg: wasAdded ? `Saved ${product.name} 💛` : "Removed from wishlist", tone: wasAdded ? "love" : "muted", id: Date.now() });
+    setTimeout(() => setPdpToast(null), 2200);
   };
 
   const savings = product.compareAt ? (product.compareAt - product.price).toFixed(2) : null;
@@ -171,7 +181,7 @@ export default function ProductDetail() {
               </div>
 
               {/* Qty + Add */}
-              <div style={{ display: "flex", gap: "1rem", alignItems: "center", marginBottom: ".75rem" }}>
+              <div style={{ display: "flex", gap: ".75rem", alignItems: "center", marginBottom: ".75rem" }}>
                 <div style={{ display: "inline-flex", alignItems: "center", border: "1.5px solid rgba(31,41,55,0.15)", borderRadius: 999, overflow: "hidden" }}>
                   <button onClick={() => setQty(Math.max(1, qty - 1))} style={{ width: 40, height: 44, fontWeight: 700, background: "transparent", border: "none", cursor: "pointer" }} data-testid="qty-decrease">−</button>
                   <span style={{ width: 40, textAlign: "center", fontWeight: 700 }} data-testid="qty-value">{qty}</span>
@@ -180,6 +190,9 @@ export default function ProductDetail() {
                 <button onClick={handleAdd} className="btn btn-primary" style={{ flex: 1 }} data-testid="product-add-to-cart">
                   <ShoppingBag size={18} />
                   {adding ? "✓ Added!" : `Add to Cart · $${(product.price * qty).toFixed(2)}`}
+                </button>
+                <button onClick={handleWishlist} aria-label={liked ? "Remove from wishlist" : "Save to wishlist"} aria-pressed={liked} className="pdp-heart-btn" data-testid="pdp-wishlist-toggle" style={{ width: 48, height: 48, borderRadius: "50%", background: liked ? "rgba(232,118,90,0.12)" : "var(--color-cream)", border: liked ? "2px solid var(--color-primary)" : "2px solid rgba(31,41,55,0.12)", display: "inline-flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0, transition: "all .2s ease" }}>
+                  <Heart size={20} fill={liked ? "var(--color-primary)" : "none"} stroke={liked ? "var(--color-primary)" : "var(--color-text)"} strokeWidth={2.2} />
                 </button>
               </div>
               <button className="btn btn-secondary btn-block" data-testid="buy-now-btn">⚡ Buy It Now</button>
@@ -366,6 +379,13 @@ export default function ProductDetail() {
         </div>
       </section>
 
+      {/* PDP TOAST */}
+      {pdpToast && (
+        <div role="status" aria-live="polite" data-testid="pdp-toast" style={{ position: "fixed", top: "1rem", right: "1rem", background: pdpToast.tone === "love" ? "var(--color-primary)" : "var(--color-text)", color: "#fff", padding: ".75rem 1.25rem", borderRadius: 999, fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: ".9rem", boxShadow: "0 10px 30px -8px rgba(0,0,0,0.25)", zIndex: 400, animation: "toastIn .25s ease", maxWidth: "calc(100vw - 2rem)" }}>
+          {pdpToast.msg}
+        </div>
+      )}
+
       {/* LIGHTBOX */}
       {lightboxOpen && (
         <div onClick={() => setLightboxOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.92)", zIndex: 300, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem", cursor: "zoom-out" }} data-testid="image-lightbox">
@@ -397,6 +417,12 @@ export default function ProductDetail() {
         .product-card-hover { transition: all .25s ease; }
         .product-card-hover:hover { transform: translateY(-6px); box-shadow: 0 18px 40px -15px rgba(0,0,0,0.18); }
         @keyframes lightboxIn { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
+        @keyframes toastIn {
+          from { opacity: 0; transform: translateY(-12px) scale(0.95); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .pdp-heart-btn:hover { transform: scale(1.06); }
+        .pdp-heart-btn:active { transform: scale(0.94); }
       `}</style>
 
       {/* STICKY MOBILE ADD-TO-CART */}

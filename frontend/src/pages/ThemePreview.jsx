@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Download, ShoppingBag, Search, User, Menu, X, ArrowLeft, Heart, Star, ChevronRight } from "lucide-react";
+import { useWishlist } from "../hooks/useWishlist";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -73,6 +74,19 @@ export default function ThemePreview() {
   const [codeCopied, setCodeCopied] = useState(false);
   const [newsletterMsg, setNewsletterMsg] = useState("");
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [wishlistOpen, setWishlistOpen] = useState(false);
+  const [toast, setToast] = useState(null); // { msg, tone }
+  const wishlist = useWishlist();
+
+  const showToast = (msg, tone = "default") => {
+    setToast({ msg, tone, id: Date.now() });
+    setTimeout(() => setToast(null), 2400);
+  };
+
+  const toggleWishlist = (p) => {
+    const wasAdded = wishlist.toggle(p.slug);
+    showToast(wasAdded ? `Saved ${p.name} 💛` : `Removed from wishlist`, wasAdded ? "love" : "muted");
+  };
 
   const addToCart = (p) => {
     setCart((prev) => {
@@ -165,9 +179,9 @@ export default function ThemePreview() {
   };
 
   useEffect(() => {
-    document.body.style.overflow = popupOpen || cartOpen || searchOpen || accountOpen || lightboxOpen ? "hidden" : "";
+    document.body.style.overflow = popupOpen || cartOpen || searchOpen || accountOpen || lightboxOpen || wishlistOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
-  }, [popupOpen, cartOpen, searchOpen, accountOpen, lightboxOpen]);
+  }, [popupOpen, cartOpen, searchOpen, accountOpen, lightboxOpen, wishlistOpen]);
 
   // Scroll-reveal animations — re-runs when the visible product set changes
   // so newly inserted cards are observed (and not stuck at opacity:0).
@@ -219,6 +233,12 @@ export default function ThemePreview() {
           <div style={{ display: "flex", gap: ".75rem", alignItems: "center", justifyContent: "flex-end" }}>
             <button style={iconBtnStyle} onClick={() => setSearchOpen(true)} data-testid="search-toggle" aria-label="Search"><Search size={20} /></button>
             <button style={iconBtnStyle} onClick={() => setAccountOpen(true)} data-testid="account-toggle" aria-label="Account"><User size={20} /></button>
+            <button style={iconBtnStyle} onClick={() => setWishlistOpen(true)} data-testid="wishlist-toggle" aria-label="Wishlist">
+              <Heart size={20} fill={wishlist.count > 0 ? "var(--color-primary)" : "none"} stroke={wishlist.count > 0 ? "var(--color-primary)" : "currentColor"} />
+              {wishlist.count > 0 && (
+                <span style={{ position: "absolute", top: 4, right: 4, minWidth: 20, height: 20, background: "var(--color-primary)", color: "#fff", borderRadius: 999, fontSize: ".7rem", fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 5px" }} data-testid="wishlist-count">{wishlist.count}</span>
+              )}
+            </button>
             <button style={iconBtnStyle} onClick={() => setCartOpen(true)} data-testid="preview-cart-toggle">
               <ShoppingBag size={20} />
               {cart.length > 0 && (
@@ -308,12 +328,17 @@ export default function ThemePreview() {
             </div>
           )}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1.5rem" }}>
-            {(activeCategory === "all" ? PRODUCTS : PRODUCTS.filter(p => p.category === activeCategory)).map((p, i) => (
+            {(activeCategory === "all" ? PRODUCTS : PRODUCTS.filter(p => p.category === activeCategory)).map((p, i) => {
+              const liked = wishlist.has(p.slug);
+              return (
               <div key={p.slug} style={{ background: "#fff", borderRadius: 24, overflow: "hidden", border: "2px solid transparent", transition: "all .25s ease", display: "flex", flexDirection: "column", cursor: "pointer" }} className="product-card-hover reveal" data-testid={`preview-product-${i}`} onClick={() => { window.scrollTo(0, 0); navigate(`/preview/product/${p.slug}`); }}>
                 <div style={{ aspectRatio: "1", background: p.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "5rem", position: "relative" }}>
                   {p.emoji}
                   {p.badge && <span style={{ position: "absolute", top: "1rem", left: "1rem", background: "var(--color-primary)", color: "#fff", padding: ".35rem .75rem", borderRadius: 999, fontSize: ".75rem", fontWeight: 700, fontFamily: "var(--font-heading)" }}>{p.badge}</span>}
-                  {p.compareAt && <span style={{ position: "absolute", top: "1rem", right: "1rem", background: "var(--color-secondary)", color: "#fff", padding: ".35rem .75rem", borderRadius: 999, fontSize: ".75rem", fontWeight: 700, fontFamily: "var(--font-heading)" }}>SALE</span>}
+                  {p.compareAt && <span style={{ position: "absolute", top: "1rem", right: "3.5rem", background: "var(--color-secondary)", color: "#fff", padding: ".35rem .75rem", borderRadius: 999, fontSize: ".75rem", fontWeight: 700, fontFamily: "var(--font-heading)" }}>SALE</span>}
+                  <button onClick={(e) => { e.stopPropagation(); toggleWishlist(p); }} aria-label={liked ? "Remove from wishlist" : "Save to wishlist"} aria-pressed={liked} className="card-heart-btn" data-testid={`wishlist-heart-${p.slug}`} style={{ position: "absolute", top: ".75rem", right: ".75rem", width: 38, height: 38, borderRadius: "50%", background: "rgba(255,255,255,0.95)", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", boxShadow: "0 4px 12px -4px rgba(0,0,0,0.15)" }}>
+                    <Heart size={18} fill={liked ? "var(--color-primary)" : "none"} stroke={liked ? "var(--color-primary)" : "var(--color-text)"} strokeWidth={2.2} />
+                  </button>
                 </div>
                 <div style={{ padding: "1.25rem", flex: 1, display: "flex", flexDirection: "column" }}>
                   <div style={{ fontSize: ".75rem", textTransform: "uppercase", letterSpacing: ".1em", color: "var(--color-secondary)", fontWeight: 700, fontFamily: "var(--font-heading)", marginBottom: ".4rem" }}>Molly &amp; Sophie</div>
@@ -328,7 +353,8 @@ export default function ThemePreview() {
                   <button onClick={(e) => { e.stopPropagation(); addToCart(p); }} className="btn btn-secondary" style={{ padding: ".55rem 1rem", fontSize: ".85rem", marginTop: "auto" }} data-testid={`preview-add-${i}`}>Add to Cart</button>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -685,6 +711,17 @@ export default function ThemePreview() {
         .ugc-tile:hover img { transform: scale(1.06); }
         .ugc-tile:hover .ugc-overlay { opacity: 1; }
         .footer-link:hover { color: var(--color-cream) !important; }
+        @keyframes toastIn {
+          from { opacity: 0; transform: translateY(-12px) scale(0.95); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes slideInRight {
+          from { transform: translateX(100%); }
+          to { transform: translateX(0); }
+        }
+        .card-heart-btn { transition: transform .2s ease, background .2s ease; }
+        .card-heart-btn:hover { transform: scale(1.1); background: #fff !important; }
+        .card-heart-btn:active { transform: scale(0.92); }
       `}</style>
 
       {/* SEARCH MODAL */}
@@ -729,6 +766,66 @@ export default function ThemePreview() {
           </div>
         </div>
       )}
+      {/* WISHLIST DRAWER */}
+      {wishlistOpen && (
+        <div onClick={() => setWishlistOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 250, display: "flex", justifyContent: "flex-end" }} data-testid="wishlist-drawer">
+          <div onClick={(e) => e.stopPropagation()} style={{ background: "var(--color-bg)", width: "100%", maxWidth: 460, height: "100%", display: "flex", flexDirection: "column", boxShadow: "-30px 0 60px -20px rgba(0,0,0,0.4)", animation: "slideInRight .3s ease" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1.25rem 1.5rem", borderBottom: "2px solid rgba(31,41,55,0.08)" }}>
+              <h2 style={{ fontSize: "1.5rem", margin: 0, display: "inline-flex", alignItems: "center", gap: ".5rem" }}>
+                <Heart size={20} fill="var(--color-primary)" stroke="var(--color-primary)" /> Wishlist
+                {wishlist.count > 0 && <span style={{ fontSize: ".95rem", color: "rgba(31,41,55,0.55)", fontWeight: 500 }}>({wishlist.count})</span>}
+              </h2>
+              <button onClick={() => setWishlistOpen(false)} style={iconBtnStyle} data-testid="wishlist-close" aria-label="Close wishlist"><X size={20} /></button>
+            </div>
+            <div style={{ flex: 1, overflowY: "auto", padding: "1rem 1.5rem" }}>
+              {wishlist.count === 0 ? (
+                <div style={{ textAlign: "center", padding: "3rem 1rem" }} data-testid="wishlist-empty">
+                  <div style={{ width: 80, height: 80, margin: "0 auto 1rem", borderRadius: "50%", background: "var(--color-mint)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Heart size={36} color="var(--color-secondary)" />
+                  </div>
+                  <h3 style={{ fontSize: "1.25rem", marginBottom: ".5rem" }}>Your wishlist is empty</h3>
+                  <p style={{ color: "rgba(31,41,55,0.6)", marginBottom: "1.5rem", fontSize: ".95rem" }}>Tap the heart on any product to save it for later.</p>
+                  <button onClick={() => { setWishlistOpen(false); document.getElementById("products")?.scrollIntoView({ behavior: "smooth" }); }} className="btn btn-primary" data-testid="wishlist-shop-btn">Browse the shop</button>
+                </div>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: ".75rem" }} data-testid="wishlist-items">
+                  {wishlist.slugs.map((slug) => {
+                    const p = PRODUCTS.find((x) => x.slug === slug);
+                    if (!p) return null;
+                    return (
+                      <div key={slug} style={{ display: "flex", gap: "1rem", background: "var(--color-cream)", borderRadius: 18, padding: ".75rem", alignItems: "center" }} data-testid={`wishlist-item-${slug}`}>
+                        <div onClick={() => { setWishlistOpen(false); window.scrollTo(0, 0); navigate(`/preview/product/${p.slug}`); }} style={{ width: 72, height: 72, background: p.bg, borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem", flexShrink: 0, cursor: "pointer" }}>{p.emoji}</div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div onClick={() => { setWishlistOpen(false); window.scrollTo(0, 0); navigate(`/preview/product/${p.slug}`); }} style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: ".95rem", marginBottom: ".15rem", cursor: "pointer", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.name}</div>
+                          <div style={{ fontSize: ".85rem", color: "var(--color-primary)", fontWeight: 800, fontFamily: "var(--font-heading)" }}>${p.price.toFixed(2)}</div>
+                          <div style={{ display: "flex", gap: ".5rem", marginTop: ".4rem" }}>
+                            <button onClick={() => { addToCart(p); }} style={{ background: "var(--color-secondary)", color: "#fff", border: "none", borderRadius: 999, padding: ".3rem .75rem", fontSize: ".75rem", fontWeight: 700, cursor: "pointer", fontFamily: "var(--font-heading)" }} data-testid={`wishlist-add-${slug}`}>+ Cart</button>
+                            <button onClick={() => { wishlist.remove(slug); showToast(`Removed from wishlist`, "muted"); }} style={{ background: "transparent", color: "rgba(31,41,55,0.6)", border: "1.5px solid rgba(31,41,55,0.15)", borderRadius: 999, padding: ".3rem .75rem", fontSize: ".75rem", fontWeight: 700, cursor: "pointer", fontFamily: "var(--font-heading)" }} data-testid={`wishlist-remove-${slug}`}>Remove</button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+            {wishlist.count > 0 && (
+              <div style={{ padding: "1rem 1.5rem", borderTop: "2px solid rgba(31,41,55,0.08)", display: "flex", gap: ".75rem" }}>
+                <button onClick={() => { wishlist.slugs.forEach((s) => { const p = PRODUCTS.find((x) => x.slug === s); if (p) addToCart(p); }); setWishlistOpen(false); }} className="btn btn-primary" style={{ flex: 1 }} data-testid="wishlist-move-all">Move all to cart</button>
+                <button onClick={() => { wishlist.clear(); showToast("Wishlist cleared", "muted"); }} className="btn btn-outline" data-testid="wishlist-clear">Clear</button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* TOAST */}
+      {toast && (
+        <div role="status" aria-live="polite" data-testid="toast" style={{ position: "fixed", top: "1rem", right: "1rem", background: toast.tone === "love" ? "var(--color-primary)" : "var(--color-text)", color: "#fff", padding: ".75rem 1.25rem", borderRadius: 999, fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: ".9rem", boxShadow: "0 10px 30px -8px rgba(0,0,0,0.25)", zIndex: 400, animation: "toastIn .25s ease", maxWidth: "calc(100vw - 2rem)" }}>
+          {toast.msg}
+        </div>
+      )}
+
     </div>
   );
 }
