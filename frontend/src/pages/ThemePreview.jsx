@@ -24,23 +24,23 @@ export const RESCUE_IMG = {
 };
 
 const PRODUCTS = [
-  { slug: "salmon-soft-treats", name: "Salmon Soft Treats", price: 14.99, compareAt: 19.99, emoji: "🦴", bg: "#ffe4d4", badge: "Bestseller", vendor: "Molly & Sophie", desc: "Slow-baked, soft, and irresistible. Made with real wild-caught salmon and zero junk — Jack approved." },
-  { slug: "cozy-donut-bed", name: "Cozy Donut Bed", price: 49.99, emoji: "🛏️", bg: "#d2efef", desc: "A plush, calming donut bed with raised edges for that secure 'I am safe and loved' feeling. Sophie's nightly choice." },
-  { slug: "squeaky-plush-carrot", name: "Squeaky Plush Carrot", price: 18.99, emoji: "🎾", bg: "#fce8da", desc: "Crinkles, squeaks, and survives at least three rounds of zoomies. Tested rigorously by Molly." },
-  { slug: "adventure-harness", name: "Adventure Harness", price: 34.99, emoji: "🦮", bg: "#e8f0d4", badge: "New", desc: "Padded, no-pull, comes in five colors. Great for hikes, casual sniff walks, and dramatic photo shoots." },
-  { slug: "calming-chew-sticks", name: "Calming Chew Sticks", price: 22.99, emoji: "🌿", bg: "#ffe4d4", desc: "Natural calming chews with chamomile and L-theanine. Perfect for vet visits, fireworks, and stressful Mondays." },
-  { slug: "premium-kibble-bowl", name: "Premium Kibble Bowl", price: 26.99, emoji: "🥣", bg: "#fce8da", desc: "Slow-feeder ceramic bowl that prevents gulping and looks gorgeous on your floor." },
-  { slug: "plaid-travel-coat", name: "Plaid Travel Coat", price: 44.99, emoji: "🧥", bg: "#e8f0d4", desc: "Water-resistant plaid coat with reflective trim. Because chilly walks deserve style." },
-  { slug: "salmon-jerky-bites", name: "Salmon Jerky Bites", price: 16.99, compareAt: 21.99, emoji: "🐟", bg: "#d2efef", desc: "High-protein single-ingredient training treats. Tiny pieces, big tail-wags." },
+  { slug: "salmon-soft-treats", category: "treats", name: "Salmon Soft Treats", price: 14.99, compareAt: 19.99, emoji: "🦴", bg: "#ffe4d4", badge: "Bestseller", vendor: "Molly & Sophie", desc: "Slow-baked, soft, and irresistible. Made with real wild-caught salmon and zero junk — Jack approved." },
+  { slug: "cozy-donut-bed", category: "beds", name: "Cozy Donut Bed", price: 49.99, emoji: "🛏️", bg: "#d2efef", desc: "A plush, calming donut bed with raised edges for that secure 'I am safe and loved' feeling. Sophie's nightly choice." },
+  { slug: "squeaky-plush-carrot", category: "toys", name: "Squeaky Plush Carrot", price: 18.99, emoji: "🎾", bg: "#fce8da", desc: "Crinkles, squeaks, and survives at least three rounds of zoomies. Tested rigorously by Molly." },
+  { slug: "adventure-harness", category: "walks", name: "Adventure Harness", price: 34.99, emoji: "🦮", bg: "#e8f0d4", badge: "New", desc: "Padded, no-pull, comes in five colors. Great for hikes, casual sniff walks, and dramatic photo shoots." },
+  { slug: "calming-chew-sticks", category: "treats", name: "Calming Chew Sticks", price: 22.99, emoji: "🌿", bg: "#ffe4d4", desc: "Natural calming chews with chamomile and L-theanine. Perfect for vet visits, fireworks, and stressful Mondays." },
+  { slug: "premium-kibble-bowl", category: "beds", name: "Premium Kibble Bowl", price: 26.99, emoji: "🥣", bg: "#fce8da", desc: "Slow-feeder ceramic bowl that prevents gulping and looks gorgeous on your floor." },
+  { slug: "plaid-travel-coat", category: "walks", name: "Plaid Travel Coat", price: 44.99, emoji: "🧥", bg: "#e8f0d4", desc: "Water-resistant plaid coat with reflective trim. Because chilly walks deserve style." },
+  { slug: "salmon-jerky-bites", category: "treats", name: "Salmon Jerky Bites", price: 16.99, compareAt: 21.99, emoji: "🐟", bg: "#d2efef", desc: "High-protein single-ingredient training treats. Tiny pieces, big tail-wags." },
 ];
 
 export { PRODUCTS };
 
 const CATEGORIES = [
-  { title: "Dog Treats", emoji: "🦴", bg: "#ffe4d4" },
-  { title: "Cozy Beds", emoji: "🛏️", bg: "#d2efef" },
-  { title: "Toys & Play", emoji: "🎾", bg: "#fce8da" },
-  { title: "Walks & Travel", emoji: "🦮", bg: "#e8f0d4" },
+  { key: "treats", title: "Dog Treats", emoji: "🦴", bg: "#ffe4d4" },
+  { key: "beds", title: "Cozy Beds", emoji: "🛏️", bg: "#d2efef" },
+  { key: "toys", title: "Toys & Play", emoji: "🎾", bg: "#fce8da" },
+  { key: "walks", title: "Walks & Travel", emoji: "🦮", bg: "#e8f0d4" },
 ];
 
 export default function ThemePreview() {
@@ -49,6 +49,7 @@ export default function ThemePreview() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [accountOpen, setAccountOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState("all");
   const [popupOpen, setPopupOpen] = useState(true);
   const [cart, setCart] = useState([]);
   const [promoInput, setPromoInput] = useState("");
@@ -136,9 +137,10 @@ export default function ThemePreview() {
     return () => { document.body.style.overflow = ""; };
   }, [popupOpen, cartOpen, searchOpen, accountOpen, lightboxOpen]);
 
-  // Scroll-reveal animations
+  // Scroll-reveal animations — re-runs when the visible product set changes
+  // so newly inserted cards are observed (and not stuck at opacity:0).
   useEffect(() => {
-    const els = document.querySelectorAll(".reveal");
+    const els = document.querySelectorAll(".reveal:not(.is-visible)");
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
         if (e.isIntersecting) {
@@ -149,7 +151,7 @@ export default function ThemePreview() {
     }, { threshold: 0.12, rootMargin: "0px 0px -60px 0px" });
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
-  }, []);
+  }, [activeCategory]);
 
   const filteredProducts = searchQuery.trim() ? PRODUCTS.filter((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase())) : [];
 
@@ -231,11 +233,11 @@ export default function ThemePreview() {
         <div className="container">
           <SectionHead eyebrow="Shop by Pet" title={<>Find what makes them <em>wag</em></>} />
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "1.5rem" }}>
-            {CATEGORIES.map((c, i) => (
-              <a key={i} href="#" style={{ background: c.bg, padding: "2rem 1.25rem", borderRadius: 24, textAlign: "center", transition: "transform .25s ease" }} className="hover-lift">
+            {CATEGORIES.map((c) => (
+              <button key={c.key} onClick={() => { setActiveCategory(c.key); document.getElementById("products")?.scrollIntoView({ behavior: "smooth" }); }} style={{ background: c.bg, padding: "2rem 1.25rem", borderRadius: 24, textAlign: "center", transition: "transform .25s ease, box-shadow .25s ease", border: activeCategory === c.key ? "3px solid var(--color-primary)" : "3px solid transparent", cursor: "pointer", fontFamily: "inherit" }} className="hover-lift" data-testid={`category-${c.key}`}>
                 <div style={{ fontSize: "3rem", marginBottom: ".75rem" }}>{c.emoji}</div>
                 <h3 style={{ fontSize: "1.125rem", margin: 0 }}>{c.title}</h3>
-              </a>
+              </button>
             ))}
           </div>
         </div>
@@ -245,9 +247,15 @@ export default function ThemePreview() {
       <section id="products" style={{ padding: "5rem 0" }} data-testid="preview-products" className="reveal">
         <div className="container">
           <SectionHead eyebrow="Best Sellers" title={<>Tail-wagging <em>favorites</em></>} sub="Hand-picked goodies our pack approves of." />
+          {activeCategory !== "all" && (
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: ".75rem", marginBottom: "2rem", flexWrap: "wrap" }} data-testid="active-filter">
+              <span style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: "0.95rem" }}>Showing: <span style={{ color: "var(--color-primary)" }}>{CATEGORIES.find(c => c.key === activeCategory)?.title}</span></span>
+              <button onClick={() => setActiveCategory("all")} className="btn btn-outline" style={{ padding: ".4rem 1rem", fontSize: ".8rem" }} data-testid="clear-filter">Show all</button>
+            </div>
+          )}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1.5rem" }}>
-            {PRODUCTS.map((p, i) => (
-              <div key={i} style={{ background: "#fff", borderRadius: 24, overflow: "hidden", border: "2px solid transparent", transition: "all .25s ease", display: "flex", flexDirection: "column", cursor: "pointer" }} className="product-card-hover reveal" data-testid={`preview-product-${i}`} onClick={() => { window.scrollTo(0, 0); navigate(`/preview/product/${p.slug}`); }}>
+            {(activeCategory === "all" ? PRODUCTS : PRODUCTS.filter(p => p.category === activeCategory)).map((p, i) => (
+              <div key={p.slug} style={{ background: "#fff", borderRadius: 24, overflow: "hidden", border: "2px solid transparent", transition: "all .25s ease", display: "flex", flexDirection: "column", cursor: "pointer" }} className="product-card-hover reveal" data-testid={`preview-product-${i}`} onClick={() => { window.scrollTo(0, 0); navigate(`/preview/product/${p.slug}`); }}>
                 <div style={{ aspectRatio: "1", background: p.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "5rem", position: "relative" }}>
                   {p.emoji}
                   {p.badge && <span style={{ position: "absolute", top: "1rem", left: "1rem", background: "var(--color-primary)", color: "#fff", padding: ".35rem .75rem", borderRadius: 999, fontSize: ".75rem", fontWeight: 700, fontFamily: "var(--font-heading)" }}>{p.badge}</span>}
