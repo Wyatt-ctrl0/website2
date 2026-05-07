@@ -32,7 +32,45 @@
           </div>
         {%- endif -%}
 
-        {%- comment -%} FAQ — sits under the product image, left column {%- endcomment -%}
+        {%- comment -%} BUNDLE — sits under the product image, left column (above FAQ) {%- endcomment -%}
+        {%- assign bundle_items_raw = product.metafields.custom.bundle_items | default: '🛏️|Cozy Donut Bed|29.99|mint,🦴|Salmon Soft Treats|14.99|coral,🎾|Squeaky Plush Carrot|18.99|peach' -%}
+        {%- assign bundle_items = bundle_items_raw | split: ',' -%}
+        {%- assign bundle_compare = product.metafields.custom.bundle_compare_price | default: '63.97' | times: 1.0 -%}
+        {%- assign bundle_price = product.metafields.custom.bundle_price | default: '57.57' | times: 1.0 -%}
+        {%- assign bundle_savings = bundle_compare | minus: bundle_price -%}
+        {%- assign bundle_discount = product.metafields.custom.bundle_discount | default: '10' -%}
+        <aside class="product-bundle" data-testid="product-bundle">
+          <div class="product-bundle-head">
+            <span class="product-bundle-eyebrow">Build a Bundle</span>
+            <h3 class="product-bundle-heading">Save more with the <em>full kit</em></h3>
+          </div>
+          <div class="product-bundle-items">
+            {%- for item in bundle_items -%}
+              {%- assign parts = item | split: '|' -%}
+              <div class="bundle-item bundle-item-{{ parts[3] | default: 'mint' }}" data-testid="bundle-item-{{ forloop.index0 }}">
+                <div class="bundle-item-emoji">{{ parts[0] }}</div>
+                <div class="bundle-item-name">{{ parts[1] }}</div>
+                <div class="bundle-item-price">${{ parts[2] }}</div>
+              </div>
+              {%- unless forloop.last -%}
+                <div class="bundle-plus" aria-hidden="true">+</div>
+              {%- endunless -%}
+            {%- endfor -%}
+          </div>
+          <div class="product-bundle-cta">
+            <div class="product-bundle-pricing">
+              <span class="product-bundle-strike">${{ bundle_compare }}</span>
+              <span class="product-bundle-price">Bundle: ${{ bundle_price }}</span>
+              <span class="product-bundle-save">You save ${{ bundle_savings }}</span>
+            </div>
+            <button type="button" class="btn btn-primary btn-block product-bundle-btn" data-bundle-add data-testid="bundle-add-btn">
+              🛒 Add Bundle to Cart
+            </button>
+            <p class="product-bundle-note">{{ bundle_discount }}% off when bought together</p>
+          </div>
+        </aside>
+
+        {%- comment -%} FAQ — sits under the BUNDLE, left column {%- endcomment -%}
         <aside class="product-faq" data-testid="product-faq">
           <div class="product-faq-head">
             <span class="product-faq-eyebrow">Curious Pups</span>

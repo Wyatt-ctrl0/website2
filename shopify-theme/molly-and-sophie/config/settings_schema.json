@@ -52,6 +52,18 @@
     ]
   },
   {
+    "name": "Bundle Upsell Popup",
+    "settings": [
+      { "type": "checkbox", "id": "bundle_upsell_enabled", "label": "Enable bundle upsell at checkout", "default": true, "info": "Shows a 'bundle &amp; save' popup when shoppers click Checkout in the cart drawer." },
+      { "type": "text", "id": "bundle_upsell_eyebrow", "label": "Eyebrow", "default": "Wait — one more thing" },
+      { "type": "text", "id": "bundle_upsell_title", "label": "Title (HTML allowed)", "default": "Bundle up & <em>save</em> before you check out" },
+      { "type": "text", "id": "bundle_upsell_subtitle", "label": "Subtitle", "default": "Add these pup-favorites to your order at a discount — your pack will thank you." },
+      { "type": "textarea", "id": "bundle_upsell_items", "label": "Items", "info": "Comma-separated: emoji|name|price|color (color = mint, coral, peach, cream)", "default": "🦴|Salmon Soft Treats|14.99|coral,🎾|Squeaky Plush Carrot|18.99|peach" },
+      { "type": "text", "id": "bundle_upsell_compare", "label": "Compare-at total ($)", "default": "33.98" },
+      { "type": "text", "id": "bundle_upsell_price", "label": "Bundle total ($)", "default": "27.18" }
+    ]
+  },
+  {
     "name": "Contact Info",
     "settings": [
       { "type": "text", "id": "email", "label": "Support email", "default": "support@mollyandsophie.com" },
