@@ -109,15 +109,32 @@ export default function ThemePreview() {
     }
   };
 
-  const copyCode = () => {
+  const copyCode = async () => {
+    const text = "WELCOME10";
+    let copied = false;
     try {
-      const p = navigator.clipboard?.writeText("WELCOME10");
-      if (p && typeof p.catch === "function") p.catch(() => {});
-    } catch (_) {
-      // iframe / sandboxed: silently ignore
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        copied = true;
+      }
+    } catch (_) { /* fall through */ }
+    if (!copied) {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.top = "-1000px";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        ta.setSelectionRange(0, text.length);
+        copied = document.execCommand("copy");
+        document.body.removeChild(ta);
+      } catch (_) { /* swallow */ }
     }
-    setCodeCopied(true);
-    setTimeout(() => setCodeCopied(false), 2000);
+    setCodeCopied(copied);
+    setTimeout(() => setCodeCopied(false), 2200);
   };
 
   const submitNewsletter = async (e) => {
@@ -419,7 +436,7 @@ export default function ThemePreview() {
       </section>
 
       {/* FAQ */}
-      <section style={{ padding: "5rem 0", background: "var(--color-bg)" }} data-testid="preview-faq">
+      <section id="preview-faq" style={{ padding: "5rem 0", background: "var(--color-bg)" }} data-testid="preview-faq">
         <div className="container" style={{ maxWidth: 820 }}>
           <SectionHead eyebrow="Curious Pups" title={<>Frequently <em>asked</em></>} sub="Quick answers from real humans (and one drooling dog)." />
           <div style={{ display: "grid", gap: ".75rem" }}>
@@ -502,8 +519,19 @@ export default function ThemePreview() {
                 ))}
               </div>
             </div>
-            <FooterCol title="Customer Care" items={["Returns", "Shipping Info", "Order Lookup", "Help Center", "Contact Us"]} />
-            <FooterCol title="About" items={["Our Story", "Meet the Pack", "Giving Back", "Blog"]} />
+            <FooterCol title="Customer Care" items={[
+              { label: "Returns", target: "preview-faq" },
+              { label: "Shipping Info", target: "preview-faq" },
+              { label: "Order Lookup", href: "mailto:support@mollyandsophie.com?subject=Order%20lookup" },
+              { label: "Help Center", target: "preview-faq" },
+              { label: "Contact Us", target: "footer-contact" },
+            ]} />
+            <FooterCol title="About" items={[
+              { label: "Our Story", target: "about" },
+              { label: "Meet the Pack", target: "about" },
+              { label: "Giving Back", target: "giving-back" },
+              { label: "Blog", href: "#" },
+            ]} />
             <div>
               <h4 style={{ color: "var(--color-cream)", fontSize: "1rem", textTransform: "uppercase", letterSpacing: ".1em", marginBottom: "1rem" }}>Get in Touch</h4>
               <p style={{ color: "rgba(255,255,255,0.7)", margin: ".4rem 0", fontSize: ".95rem" }}>support@mollyandsophie.com</p>
@@ -602,8 +630,22 @@ export default function ThemePreview() {
             <button onClick={() => setPopupOpen(false)} style={{ position: "absolute", top: "1rem", right: "1rem", width: 40, height: 40, borderRadius: "50%", background: "rgba(255,255,255,0.9)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 5, border: "none", cursor: "pointer" }} data-testid="popup-close">
               <X size={20} />
             </button>
-            <div style={{ background: "var(--color-mint)", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem", minHeight: 280 }}>
-              <PawPrint size={180} color="#3a2218" />
+            <div className="popup-hero" style={{ background: "var(--color-mint)", display: "flex", alignItems: "center", justifyContent: "center", padding: "1.75rem", minHeight: 280, position: "relative", overflow: "hidden" }}>
+              {/* decorative scattered paws */}
+              <div style={{ position: "absolute", top: "8%", left: "10%", opacity: 0.18, transform: "rotate(-18deg)" }} aria-hidden><PawPrint size={48} color="#3a2218" /></div>
+              <div style={{ position: "absolute", top: "16%", right: "12%", opacity: 0.14, transform: "rotate(22deg)" }} aria-hidden><PawPrint size={36} color="#3a2218" /></div>
+              <div style={{ position: "absolute", bottom: "14%", left: "16%", opacity: 0.16, transform: "rotate(28deg)" }} aria-hidden><PawPrint size={42} color="#3a2218" /></div>
+              <div style={{ position: "absolute", bottom: "8%", right: "10%", opacity: 0.20, transform: "rotate(-12deg)" }} aria-hidden><PawPrint size={56} color="#3a2218" /></div>
+
+              {/* hero photo */}
+              <div style={{ position: "relative", width: "min(78%, 220px)", aspectRatio: "1", borderRadius: "50%", overflow: "hidden", boxShadow: "0 18px 40px -12px rgba(0,0,0,0.35)", border: "6px solid var(--color-bg)" }}>
+                <img src={RESCUE_IMG.molly} alt="Molly the rescue puppy" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              </div>
+
+              {/* 1% rescue badge floating */}
+              <div style={{ position: "absolute", bottom: "8%", left: "50%", transform: "translateX(-50%)", background: "var(--color-primary)", color: "#fff", borderRadius: 999, padding: ".45rem 1rem", fontFamily: "var(--font-heading)", fontSize: ".75rem", fontWeight: 800, letterSpacing: ".05em", boxShadow: "0 6px 0 rgba(0,0,0,0.08)", display: "inline-flex", alignItems: "center", gap: ".4rem", whiteSpace: "nowrap" }}>
+                🐾 1% to pet rescues
+              </div>
             </div>
             <div style={{ padding: "2.5rem", textAlign: "center" }}>
               <h2 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", marginBottom: ".5rem" }}>Welcome to <em>the Pack</em></h2>
@@ -642,6 +684,7 @@ export default function ThemePreview() {
         .ugc-tile:hover { transform: translateY(-4px); }
         .ugc-tile:hover img { transform: scale(1.06); }
         .ugc-tile:hover .ugc-overlay { opacity: 1; }
+        .footer-link:hover { color: var(--color-cream) !important; }
       `}</style>
 
       {/* SEARCH MODAL */}
@@ -691,7 +734,6 @@ export default function ThemePreview() {
 }
 
 const iconBtnStyle = { width: 44, height: 44, display: "inline-flex", alignItems: "center", justifyContent: "center", borderRadius: "50%", background: "transparent", border: "none", cursor: "pointer", position: "relative", color: "var(--color-text)" };
-const qtyBtnStyle = { width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, background: "transparent", border: "none", cursor: "pointer" };
 
 function SectionHead({ eyebrow, title, sub }) {
   return (
@@ -704,15 +746,25 @@ function SectionHead({ eyebrow, title, sub }) {
 }
 
 function FooterCol({ title, items }) {
+  const handleClick = (e, item) => {
+    if (item.target) {
+      e.preventDefault();
+      const el = document.getElementById(item.target);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    }
+  };
   return (
     <div>
       <h4 style={{ color: "var(--color-cream)", fontSize: "1rem", textTransform: "uppercase", letterSpacing: ".1em", marginBottom: "1rem" }}>{title}</h4>
       <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-        {items.map((it) => (
-          <li key={it} style={{ marginBottom: ".6rem" }}>
-            <a href="#" style={{ color: "rgba(255,255,255,0.7)" }}>{it}</a>
-          </li>
-        ))}
+        {items.map((it) => {
+          const item = typeof it === "string" ? { label: it, href: "#" } : it;
+          return (
+            <li key={item.label} style={{ marginBottom: ".6rem" }}>
+              <a href={item.href || "#"} onClick={(e) => handleClick(e, item)} style={{ color: "rgba(255,255,255,0.7)", transition: "color .2s ease" }} className="footer-link" data-testid={`footer-link-${item.label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}>{item.label}</a>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
