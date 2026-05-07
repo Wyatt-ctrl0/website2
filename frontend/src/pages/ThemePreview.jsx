@@ -4,7 +4,18 @@ import { Download, ShoppingBag, Search, User, Menu, X, ArrowLeft, Heart, Star, C
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
-const LOGO_URL = "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/qgnbhbs7_image.png";
+const LOGO_URL = "/img/logo.png";
+
+// Mud paw print SVG (used in promo popup)
+export const PawPrint = ({ size = 120, color = "#5C3A2E", className = "" }) => (
+  <svg width={size} height={size} viewBox="0 0 64 64" className={className} aria-hidden="true">
+    <ellipse cx="32" cy="42" rx="14" ry="12" fill={color} />
+    <ellipse cx="14" cy="22" rx="6" ry="8" fill={color} transform="rotate(-15 14 22)" />
+    <ellipse cx="50" cy="22" rx="6" ry="8" fill={color} transform="rotate(15 50 22)" />
+    <ellipse cx="22" cy="10" rx="5" ry="6.5" fill={color} />
+    <ellipse cx="42" cy="10" rx="5" ry="6.5" fill={color} />
+  </svg>
+);
 
 export const RESCUE_IMG = {
   jack: "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/q86lwpgi_IMG_1473.jpg",
@@ -35,6 +46,9 @@ const CATEGORIES = [
 export default function ThemePreview() {
   const navigate = useNavigate();
   const [cartOpen, setCartOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [accountOpen, setAccountOpen] = useState(false);
   const [popupOpen, setPopupOpen] = useState(true);
   const [cart, setCart] = useState([]);
   const [promoInput, setPromoInput] = useState("");
@@ -42,6 +56,7 @@ export default function ThemePreview() {
   const [promoMsg, setPromoMsg] = useState("");
   const [codeCopied, setCodeCopied] = useState(false);
   const [newsletterMsg, setNewsletterMsg] = useState("");
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const addToCart = (p) => {
     setCart((prev) => {
@@ -117,9 +132,26 @@ export default function ThemePreview() {
   };
 
   useEffect(() => {
-    document.body.style.overflow = popupOpen || cartOpen ? "hidden" : "";
+    document.body.style.overflow = popupOpen || cartOpen || searchOpen || accountOpen || lightboxOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
-  }, [popupOpen, cartOpen]);
+  }, [popupOpen, cartOpen, searchOpen, accountOpen, lightboxOpen]);
+
+  // Scroll-reveal animations
+  useEffect(() => {
+    const els = document.querySelectorAll(".reveal");
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add("is-visible");
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -60px 0px" });
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+
+  const filteredProducts = searchQuery.trim() ? PRODUCTS.filter((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase())) : [];
 
   return (
     <div style={{ background: "var(--color-bg)" }} data-testid="theme-preview">
@@ -143,17 +175,16 @@ export default function ThemePreview() {
       <header style={{ background: "var(--color-bg)", borderBottom: "2px solid rgba(31,41,55,0.08)", position: "sticky", top: 0, zIndex: 30 }} data-testid="theme-header">
         <div className="container" style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center", padding: "1rem", gap: "1rem" }}>
           <nav style={{ display: "flex", gap: "2rem", fontFamily: "var(--font-heading)", fontWeight: 600 }} className="hide-mobile">
-            <a href="#shop" style={{ fontSize: "1rem" }}>Shop All</a>
-            <a href="#shop" style={{ fontSize: "1rem" }}>Dogs</a>
-            <a href="#about" style={{ fontSize: "1rem" }}>Our Story</a>
-            <a href="#footer" style={{ fontSize: "1rem" }}>Contact</a>
+            <button onClick={() => document.getElementById("products")?.scrollIntoView({ behavior: "smooth" })} style={{ background: "none", border: "none", fontFamily: "inherit", fontWeight: "inherit", fontSize: "1rem", cursor: "pointer", color: "inherit" }} data-testid="nav-shop-all">Shop All</button>
+            <button onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: "smooth" })} style={{ background: "none", border: "none", fontFamily: "inherit", fontWeight: "inherit", fontSize: "1rem", cursor: "pointer", color: "inherit" }} data-testid="nav-our-story">Our Story</button>
+            <button onClick={() => document.getElementById("footer-contact")?.scrollIntoView({ behavior: "smooth" })} style={{ background: "none", border: "none", fontFamily: "inherit", fontWeight: "inherit", fontSize: "1rem", cursor: "pointer", color: "inherit" }} data-testid="nav-contact">Contact</button>
           </nav>
-          <a href="#" style={{ display: "flex", justifyContent: "center" }}>
-            <img src={LOGO_URL} alt="Molly & Sophie" style={{ height: 64, width: "auto" }} />
+          <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }} style={{ display: "flex", justifyContent: "center" }} data-testid="logo-link">
+            <img src={LOGO_URL} alt="Molly & Sophie" style={{ height: 96, width: "auto" }} className="header-logo-img" />
           </a>
           <div style={{ display: "flex", gap: ".75rem", alignItems: "center", justifyContent: "flex-end" }}>
-            <button style={iconBtnStyle}><Search size={20} /></button>
-            <button style={iconBtnStyle}><User size={20} /></button>
+            <button style={iconBtnStyle} onClick={() => setSearchOpen(true)} data-testid="search-toggle" aria-label="Search"><Search size={20} /></button>
+            <button style={iconBtnStyle} onClick={() => setAccountOpen(true)} data-testid="account-toggle" aria-label="Account"><User size={20} /></button>
             <button style={iconBtnStyle} onClick={() => setCartOpen(true)} data-testid="preview-cart-toggle">
               <ShoppingBag size={20} />
               {cart.length > 0 && (
@@ -211,12 +242,12 @@ export default function ThemePreview() {
       </section>
 
       {/* FEATURED PRODUCTS */}
-      <section id="products" style={{ padding: "5rem 0" }} data-testid="preview-products">
+      <section id="products" style={{ padding: "5rem 0" }} data-testid="preview-products" className="reveal">
         <div className="container">
           <SectionHead eyebrow="Best Sellers" title={<>Tail-wagging <em>favorites</em></>} sub="Hand-picked goodies our pack approves of." />
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1.5rem" }}>
             {PRODUCTS.map((p, i) => (
-              <div key={i} style={{ background: "#fff", borderRadius: 24, overflow: "hidden", border: "2px solid transparent", transition: "all .25s ease", display: "flex", flexDirection: "column", cursor: "pointer" }} className="product-card-hover" data-testid={`preview-product-${i}`} onClick={() => navigate(`/preview/product/${p.slug}`)}>
+              <div key={i} style={{ background: "#fff", borderRadius: 24, overflow: "hidden", border: "2px solid transparent", transition: "all .25s ease", display: "flex", flexDirection: "column", cursor: "pointer" }} className="product-card-hover reveal" data-testid={`preview-product-${i}`} onClick={() => { window.scrollTo(0, 0); navigate(`/preview/product/${p.slug}`); }}>
                 <div style={{ aspectRatio: "1", background: p.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "5rem", position: "relative" }}>
                   {p.emoji}
                   {p.badge && <span style={{ position: "absolute", top: "1rem", left: "1rem", background: "var(--color-primary)", color: "#fff", padding: ".35rem .75rem", borderRadius: 999, fontSize: ".75rem", fontWeight: 700, fontFamily: "var(--font-heading)" }}>{p.badge}</span>}
@@ -247,7 +278,7 @@ export default function ThemePreview() {
               { name: "Sophie", slug: "sophie", role: "The Fluffy Diplomat", img: RESCUE_IMG.sophie, bio: "Sophie was left behind during quarantine. Their loss; our luckiest day. She greets everyone like a long-lost friend." },
               { name: "Molly", slug: "molly", role: "The Sunshine", img: RESCUE_IMG.molly, bio: "Molly's first owners couldn't afford to care for her. Now she's pure goofy puppy joy and the reason this shop exists." },
             ].map((r) => (
-              <div key={r.name} onClick={() => navigate(`/preview/dog/${r.slug}`)} style={{ textAlign: "center", background: "var(--color-bg)", padding: "2rem 1.5rem", borderRadius: 28, border: "3px dashed rgba(31,41,55,0.15)", cursor: "pointer" }} className="hover-lift" data-testid={`preview-rescue-card-${r.slug}`}>
+              <div key={r.name} onClick={() => { window.scrollTo(0, 0); navigate(`/preview/dog/${r.slug}`); }} style={{ textAlign: "center", background: "var(--color-bg)", padding: "2rem 1.5rem", borderRadius: 28, border: "3px dashed rgba(31,41,55,0.15)", cursor: "pointer" }} className="hover-lift reveal" data-testid={`preview-rescue-card-${r.slug}`}>
                 <div style={{ width: 180, height: 180, margin: "0 auto 1.5rem", borderRadius: "50%", overflow: "hidden", border: "6px solid var(--color-mint)", boxShadow: "0 10px 25px -10px rgba(0,0,0,0.2)" }}>
                   <img src={r.img} alt={r.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                 </div>
@@ -269,7 +300,31 @@ export default function ThemePreview() {
               <h2 style={{ color: "#fff", margin: "0 0 .5rem" }}>1% of every order. Donated monthly.</h2>
               <p style={{ color: "rgba(255,255,255,0.9)", margin: 0 }}>We're not affiliated with any single charity — every month, we hand-pick a trusted pet rescue and donate 1% of orders directly to them.</p>
             </div>
-            <a href="#" className="btn btn-light">How It Works</a>
+            <a href="#giving-back" onClick={(e) => { e.preventDefault(); document.getElementById("giving-back")?.scrollIntoView({ behavior: "smooth" }); }} className="btn btn-light" data-testid="how-it-works-btn">How It Works</a>
+          </div>
+        </div>
+      </section>
+
+      {/* GIVING BACK SECTION */}
+      <section id="giving-back" style={{ padding: "5rem 0", background: "var(--color-bg)" }} data-testid="giving-back" className="reveal">
+        <div className="container" style={{ maxWidth: 880 }}>
+          <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+            <div style={{ display: "inline-block", fontFamily: "var(--font-heading)", fontSize: ".85rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".15em", color: "var(--color-secondary)", marginBottom: "1rem" }}>How It Works</div>
+            <h2 style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)" }}>Small shop, <em>real impact</em></h2>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1.5rem" }}>
+            {[
+              { num: "01", title: "You shop", desc: "Every order, every product — no minimums, no fine print." },
+              { num: "02", title: "We set aside 1%", desc: "From every single order, automatically. We keep track every month." },
+              { num: "03", title: "We hand-pick a rescue", desc: "Each month we choose a different small, trusted pet rescue we believe in. We're not partnered with any single charity — just spreading the love." },
+              { num: "04", title: "We donate. You see proof.", desc: "We post the donation receipt on Instagram so you know it actually happened." },
+            ].map((s, i) => (
+              <div key={i} style={{ background: "var(--color-cream)", padding: "2rem 1.5rem", borderRadius: 24 }} className="reveal" data-testid={`giving-step-${i + 1}`}>
+                <div style={{ fontFamily: "var(--font-heading)", fontWeight: 800, fontSize: "2.5rem", color: "var(--color-primary)", lineHeight: 1, marginBottom: ".5rem" }}>{s.num}</div>
+                <h3 style={{ fontSize: "1.1rem", marginBottom: ".5rem" }}>{s.title}</h3>
+                <p style={{ color: "rgba(31,41,55,0.7)", margin: 0, fontSize: ".95rem" }}>{s.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -316,7 +371,7 @@ export default function ThemePreview() {
       </section>
 
       {/* FOOTER */}
-      <footer style={{ background: "var(--color-text)", color: "var(--color-cream)", padding: "4rem 0 2rem" }} data-testid="preview-footer">
+      <footer id="footer-contact" style={{ background: "var(--color-text)", color: "var(--color-cream)", padding: "4rem 0 2rem" }} data-testid="preview-footer">
         <div className="container">
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "2.5rem", paddingBottom: "3rem", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
             <div>
@@ -434,7 +489,9 @@ export default function ThemePreview() {
             <button onClick={() => setPopupOpen(false)} style={{ position: "absolute", top: "1rem", right: "1rem", width: 40, height: 40, borderRadius: "50%", background: "rgba(255,255,255,0.9)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 5, border: "none", cursor: "pointer" }} data-testid="popup-close">
               <X size={20} />
             </button>
-            <div style={{ background: "var(--color-mint)", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem", minHeight: 280, fontSize: "8rem" }}>🐾</div>
+            <div style={{ background: "var(--color-mint)", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem", minHeight: 280 }}>
+              <PawPrint size={180} color="#3a2218" />
+            </div>
             <div style={{ padding: "2.5rem", textAlign: "center" }}>
               <h2 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", marginBottom: ".5rem" }}>Welcome to <em>the Pack</em></h2>
               <p style={{ color: "rgba(31,41,55,0.65)" }}>10% off your first order over $50</p>
@@ -460,7 +517,58 @@ export default function ThemePreview() {
         .product-card-hover:hover { transform: translateY(-6px); box-shadow: 0 18px 40px -15px rgba(0,0,0,0.18); border-color: var(--color-secondary) !important; }
         .hover-lift { transition: transform .25s ease, box-shadow .25s ease; }
         .hover-lift:hover { transform: translateY(-6px); }
+        .reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s ease, transform .8s ease; }
+        .reveal.is-visible { opacity: 1; transform: translateY(0); }
+        .header-logo-img { transition: transform .35s ease; }
+        .header-logo-img:hover { transform: scale(1.05) rotate(-2deg); }
+        @keyframes shimmer {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
       `}</style>
+
+      {/* SEARCH MODAL */}
+      {searchOpen && (
+        <div onClick={() => setSearchOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 250, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "8vh 1rem 1rem" }} data-testid="search-modal">
+          <div onClick={(e) => e.stopPropagation()} style={{ background: "var(--color-bg)", borderRadius: 24, width: "100%", maxWidth: 640, padding: "1.5rem", boxShadow: "0 30px 60px -20px rgba(0,0,0,0.4)" }}>
+            <div style={{ display: "flex", gap: ".75rem", alignItems: "center", borderBottom: "2px solid rgba(31,41,55,0.1)", paddingBottom: "1rem" }}>
+              <Search size={22} style={{ color: "var(--color-primary)" }} />
+              <input autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search treats, beds, toys..." style={{ flex: 1, border: "none", background: "transparent", fontSize: "1.15rem", outline: "none", fontFamily: "var(--font-heading)", fontWeight: 600 }} data-testid="search-input" />
+              <button onClick={() => setSearchOpen(false)} style={iconBtnStyle} data-testid="search-close"><X size={20} /></button>
+            </div>
+            <div style={{ marginTop: "1rem", maxHeight: "50vh", overflowY: "auto" }}>
+              {searchQuery.trim() === "" ? (
+                <div style={{ color: "rgba(31,41,55,0.5)", fontSize: ".95rem", padding: "1rem 0" }}>Try "salmon", "bed", "harness"...</div>
+              ) : filteredProducts.length === 0 ? (
+                <div style={{ color: "rgba(31,41,55,0.5)", fontSize: ".95rem", padding: "1rem 0" }}>No products match "{searchQuery}".</div>
+              ) : filteredProducts.map((p) => (
+                <button key={p.slug} onClick={() => { setSearchOpen(false); setSearchQuery(""); window.scrollTo(0, 0); navigate(`/preview/product/${p.slug}`); }} style={{ display: "flex", alignItems: "center", gap: "1rem", padding: ".75rem", borderRadius: 12, width: "100%", textAlign: "left", border: "none", background: "transparent", cursor: "pointer", transition: "background .2s ease" }} className="search-result-item" data-testid={`search-result-${p.slug}`}>
+                  <div style={{ width: 56, height: 56, borderRadius: 12, background: p.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem", flexShrink: 0 }}>{p.emoji}</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontFamily: "var(--font-heading)", fontWeight: 700 }}>{p.name}</div>
+                    <div style={{ fontSize: ".85rem", color: "rgba(31,41,55,0.6)" }}>${p.price.toFixed(2)}</div>
+                  </div>
+                  <ChevronRight size={18} style={{ color: "rgba(31,41,55,0.3)" }} />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ACCOUNT MODAL */}
+      {accountOpen && (
+        <div onClick={() => setAccountOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 250, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }} data-testid="account-modal">
+          <div onClick={(e) => e.stopPropagation()} style={{ background: "var(--color-bg)", borderRadius: 24, width: "100%", maxWidth: 460, padding: "2.5rem 2rem", textAlign: "center", boxShadow: "0 30px 60px -20px rgba(0,0,0,0.4)" }}>
+            <button onClick={() => setAccountOpen(false)} style={{ ...iconBtnStyle, position: "absolute", margin: "1rem", top: 0, right: 0 }} data-testid="account-close"><X size={20} /></button>
+            <div style={{ width: 80, height: 80, margin: "0 auto 1.25rem", borderRadius: "50%", background: "var(--color-mint)", display: "flex", alignItems: "center", justifyContent: "center" }}><User size={36} /></div>
+            <h2 style={{ fontSize: "1.75rem", marginBottom: ".5rem" }}>Welcome <em>back</em></h2>
+            <p style={{ color: "rgba(31,41,55,0.65)", marginBottom: "1.5rem" }}>Login & accounts will be powered by Shopify once your store is live.</p>
+            <button onClick={() => setAccountOpen(false)} className="btn btn-primary btn-block" data-testid="account-ok">Got it</button>
+            <p style={{ fontSize: ".8rem", color: "rgba(31,41,55,0.55)", marginTop: "1rem" }}>This is a theme preview — Shopify handles real customer accounts.</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

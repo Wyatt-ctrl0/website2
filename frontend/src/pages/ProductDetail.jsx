@@ -1,9 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, ShoppingBag, Truck, RotateCcw, Heart, ChevronDown, Star, Shield } from "lucide-react";
+import { ArrowLeft, ShoppingBag, Truck, RotateCcw, Heart, ChevronDown, X, ZoomIn, Ruler, FileText, Award } from "lucide-react";
 import { PRODUCTS } from "./ThemePreview";
 
-const LOGO_URL = "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/qgnbhbs7_image.png";
+const LOGO_URL = "/img/logo.png";
+
+const SPECS_BY_TYPE = {
+  default: {
+    specs: [
+      { label: "Material", value: "Premium pet-safe blend" },
+      { label: "Care", value: "Spot-clean or hand-wash" },
+      { label: "Country of origin", value: "USA" },
+      { label: "Best for", value: "Small to large breeds" },
+    ],
+    dimensions: [
+      { label: "Small", value: "5 × 4 × 1 in · 0.3 lb" },
+      { label: "Medium", value: "7 × 5 × 1.5 in · 0.5 lb" },
+      { label: "Large", value: "9 × 6 × 2 in · 0.8 lb" },
+    ],
+    tester: { name: "Sophie", note: "Approved with three full tail-wags and a stolen sock as celebration. She tried to share with Molly. Molly declined. We call that 5 stars." },
+  },
+};
 
 export default function ProductDetail() {
   const { slug } = useParams();
@@ -14,8 +31,31 @@ export default function ProductDetail() {
   const [color, setColor] = useState("Coral");
   const [openAccordion, setOpenAccordion] = useState("love");
   const [adding, setAdding] = useState(false);
-
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const otherProducts = PRODUCTS.filter((p) => p.slug !== product.slug).slice(0, 4);
+  const specsRef = useRef(null);
+  const specs = SPECS_BY_TYPE.default;
+
+  // Scroll to top on mount + when slug changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [slug]);
+
+  // Reveal animations
+  useEffect(() => {
+    const els = document.querySelectorAll(".reveal");
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("is-visible"); io.unobserve(e.target); } });
+    }, { threshold: 0.12, rootMargin: "0px 0px -60px 0px" });
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, [slug]);
+
+  // Lock body scroll for lightbox
+  useEffect(() => {
+    document.body.style.overflow = lightboxOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [lightboxOpen]);
 
   const handleAdd = () => {
     setAdding(true);
@@ -35,17 +75,16 @@ export default function ProductDetail() {
         <Link to="/" style={{ color: "var(--color-cream)", fontSize: ".8rem" }}>← Theme info</Link>
       </div>
 
-      {/* SIMPLE HEADER */}
+      {/* HEADER */}
       <header style={{ background: "var(--color-bg)", borderBottom: "2px solid rgba(31,41,55,0.08)", padding: "1rem 0" }}>
         <div className="container" style={{ display: "flex", justifyContent: "center" }}>
-          <Link to="/preview"><img src={LOGO_URL} alt="Molly & Sophie" style={{ height: 56 }} /></Link>
+          <Link to="/preview" data-testid="product-logo-link"><img src={LOGO_URL} alt="Molly & Sophie" style={{ height: 96 }} className="header-logo-img" /></Link>
         </div>
       </header>
 
       {/* PRODUCT */}
       <section style={{ padding: "2.5rem 0 4rem" }}>
         <div className="container">
-          {/* Breadcrumbs */}
           <nav style={{ fontSize: ".85rem", color: "rgba(31,41,55,0.6)", marginBottom: "1.5rem" }} data-testid="breadcrumbs">
             <Link to="/preview" style={{ color: "rgba(31,41,55,0.6)" }}>Home</Link>
             <span style={{ margin: "0 .5rem" }}>›</span>
@@ -56,21 +95,24 @@ export default function ProductDetail() {
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "3rem" }} className="product-grid-md">
             {/* Gallery */}
-            <div>
-              <div style={{ aspectRatio: "1", background: product.bg, borderRadius: 24, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "10rem", position: "relative", overflow: "hidden" }} data-testid="product-main-image">
+            <div className="reveal">
+              <div onClick={() => setLightboxOpen(true)} style={{ aspectRatio: "1", background: product.bg, borderRadius: 24, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "10rem", position: "relative", overflow: "hidden", cursor: "zoom-in" }} data-testid="product-main-image" className="product-main-image">
                 {product.emoji}
                 {product.badge && <span style={{ position: "absolute", top: "1.25rem", left: "1.25rem", background: "var(--color-primary)", color: "#fff", padding: ".5rem 1rem", borderRadius: 999, fontFamily: "var(--font-heading)", fontWeight: 800, fontSize: ".85rem" }}>{product.badge}</span>}
                 {product.compareAt && <span style={{ position: "absolute", top: "1.25rem", right: "1.25rem", background: "var(--color-secondary)", color: "#fff", padding: ".5rem 1rem", borderRadius: 999, fontFamily: "var(--font-heading)", fontWeight: 800, fontSize: ".85rem" }}>SALE</span>}
+                <div className="zoom-hint" style={{ position: "absolute", bottom: "1rem", right: "1rem", background: "rgba(255,255,255,0.95)", borderRadius: 999, padding: ".5rem .85rem", display: "inline-flex", alignItems: "center", gap: ".4rem", fontSize: ".8rem", fontFamily: "var(--font-heading)", fontWeight: 700 }}>
+                  <ZoomIn size={14} /> Click to enlarge
+                </div>
               </div>
               <div style={{ display: "flex", gap: ".75rem", marginTop: "1rem", flexWrap: "wrap" }}>
                 {[1, 2, 3, 4].map((i) => (
-                  <button key={i} style={{ width: 80, height: 80, borderRadius: 12, background: product.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem", border: i === 1 ? "2px solid var(--color-primary)" : "2px solid transparent", cursor: "pointer" }} data-testid={`product-thumb-${i}`}>{product.emoji}</button>
+                  <button key={i} onClick={() => setLightboxOpen(true)} style={{ width: 80, height: 80, borderRadius: 12, background: product.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem", border: i === 1 ? "2px solid var(--color-primary)" : "2px solid transparent", cursor: "pointer", transition: "transform .2s ease, border-color .2s ease" }} className="thumb-btn" data-testid={`product-thumb-${i}`}>{product.emoji}</button>
                 ))}
               </div>
             </div>
 
             {/* Details */}
-            <div>
+            <div className="reveal">
               <div style={{ fontSize: ".75rem", textTransform: "uppercase", letterSpacing: ".1em", color: "var(--color-secondary)", fontWeight: 700, fontFamily: "var(--font-heading)", marginBottom: ".5rem" }}>{product.vendor || "Molly & Sophie"}</div>
               <h1 style={{ fontSize: "clamp(1.75rem, 3vw, 2.75rem)", marginBottom: ".75rem" }} data-testid="product-name">{product.name}</h1>
 
@@ -103,7 +145,7 @@ export default function ProductDetail() {
                     { name: "Cream", val: "#F5EBD8" },
                     { name: "Mint", val: "#B5D6CD" },
                   ].map((c) => (
-                    <button key={c.name} onClick={() => setColor(c.name)} style={{ width: 40, height: 40, borderRadius: "50%", background: c.val, border: color === c.name ? "3px solid var(--color-text)" : "2px solid rgba(31,41,55,0.15)", cursor: "pointer" }} aria-label={c.name} data-testid={`color-${c.name.toLowerCase()}`} />
+                    <button key={c.name} onClick={() => setColor(c.name)} style={{ width: 40, height: 40, borderRadius: "50%", background: c.val, border: color === c.name ? "3px solid var(--color-text)" : "2px solid rgba(31,41,55,0.15)", cursor: "pointer", transition: "transform .2s ease, border-color .2s ease" }} className="color-swatch" aria-label={c.name} data-testid={`color-${c.name.toLowerCase()}`} />
                   ))}
                 </div>
               </div>
@@ -113,7 +155,7 @@ export default function ProductDetail() {
                 <div style={{ fontFamily: "var(--font-heading)", fontWeight: 700, marginBottom: ".5rem" }}>Size: <span style={{ color: "var(--color-primary)" }}>{size}</span></div>
                 <div style={{ display: "flex", gap: ".5rem", flexWrap: "wrap" }}>
                   {["Small", "Medium", "Large", "X-Large"].map((s) => (
-                    <button key={s} onClick={() => setSize(s)} style={{ padding: ".5rem 1rem", border: size === s ? "2px solid var(--color-text)" : "1.5px solid rgba(31,41,55,0.15)", background: size === s ? "var(--color-text)" : "transparent", color: size === s ? "var(--color-bg)" : "var(--color-text)", borderRadius: 999, fontSize: ".9rem", cursor: "pointer", fontWeight: size === s ? 700 : 500 }} data-testid={`size-${s.toLowerCase()}`}>{s}</button>
+                    <button key={s} onClick={() => setSize(s)} style={{ padding: ".5rem 1rem", border: size === s ? "2px solid var(--color-text)" : "1.5px solid rgba(31,41,55,0.15)", background: size === s ? "var(--color-text)" : "transparent", color: size === s ? "var(--color-bg)" : "var(--color-text)", borderRadius: 999, fontSize: ".9rem", cursor: "pointer", fontWeight: size === s ? 700 : 500, transition: "all .2s ease" }} data-testid={`size-${s.toLowerCase()}`}>{s}</button>
                   ))}
                 </div>
               </div>
@@ -131,6 +173,51 @@ export default function ProductDetail() {
                 </button>
               </div>
               <button className="btn btn-secondary btn-block" data-testid="buy-now-btn">⚡ Buy It Now</button>
+
+              {/* Specs / Dimensions / Tester's Note - directly below add to cart */}
+              <div ref={specsRef} style={{ marginTop: "2.5rem" }} data-testid="product-specs-section" className="reveal">
+                <h3 style={{ fontSize: "1.25rem", marginBottom: "1.25rem", display: "flex", alignItems: "center", gap: ".5rem" }}><Award size={20} style={{ color: "var(--color-primary)" }} /> Product details</h3>
+
+                {/* Specs */}
+                <div style={{ background: "var(--color-cream)", padding: "1.5rem", borderRadius: 20, marginBottom: "1rem" }} data-testid="specs-block">
+                  <div style={{ display: "flex", alignItems: "center", gap: ".5rem", fontFamily: "var(--font-heading)", fontWeight: 700, marginBottom: "1rem", fontSize: "1rem" }}><FileText size={16} /> Specs</div>
+                  <dl style={{ display: "grid", gridTemplateColumns: "auto 1fr", columnGap: "1.5rem", rowGap: ".6rem", margin: 0, fontSize: ".95rem" }}>
+                    {specs.specs.map((s) => (
+                      <React.Fragment key={s.label}>
+                        <dt style={{ fontWeight: 700, color: "rgba(31,41,55,0.8)" }}>{s.label}</dt>
+                        <dd style={{ margin: 0, color: "rgba(31,41,55,0.7)" }}>{s.value}</dd>
+                      </React.Fragment>
+                    ))}
+                  </dl>
+                </div>
+
+                {/* Dimensions */}
+                <div style={{ background: "var(--color-cream)", padding: "1.5rem", borderRadius: 20, marginBottom: "1rem" }} data-testid="dimensions-block">
+                  <div style={{ display: "flex", alignItems: "center", gap: ".5rem", fontFamily: "var(--font-heading)", fontWeight: 700, marginBottom: "1rem", fontSize: "1rem" }}><Ruler size={16} /> Dimensions</div>
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: ".95rem" }}>
+                    <tbody>
+                      {specs.dimensions.map((d) => (
+                        <tr key={d.label} style={{ borderBottom: "1px dashed rgba(31,41,55,0.12)" }}>
+                          <td style={{ padding: ".5rem .25rem .5rem 0", fontWeight: 700 }}>{d.label}</td>
+                          <td style={{ padding: ".5rem 0", color: "rgba(31,41,55,0.7)", textAlign: "right" }}>{d.value}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Tester's Note */}
+                <div style={{ background: "var(--color-mint)", padding: "1.5rem", borderRadius: 20, position: "relative" }} data-testid="tester-note-block">
+                  <div style={{ display: "flex", alignItems: "center", gap: ".75rem", marginBottom: "1rem" }}>
+                    <div style={{ width: 44, height: 44, borderRadius: "50%", background: "var(--color-bg)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-heading)", fontWeight: 800, color: "var(--color-primary)" }}>{specs.tester.name[0]}</div>
+                    <div>
+                      <div style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: ".95rem" }}>{specs.tester.name}'s tester note</div>
+                      <div style={{ fontSize: ".8rem", color: "rgba(31,41,55,0.65)" }}>Chief product officer (4 paws, 2 ears)</div>
+                    </div>
+                  </div>
+                  <p style={{ margin: 0, fontStyle: "italic", color: "rgba(31,41,55,0.85)", fontSize: ".95rem", lineHeight: 1.6 }}>"{specs.tester.note}"</p>
+                </div>
+              </div>
 
               {/* Accordions */}
               <div style={{ marginTop: "2rem" }}>
@@ -162,7 +249,7 @@ export default function ProductDetail() {
       </section>
 
       {/* RECOMMENDATIONS */}
-      <section style={{ padding: "4rem 0", background: "var(--color-cream)" }}>
+      <section style={{ padding: "4rem 0", background: "var(--color-cream)" }} className="reveal">
         <div className="container">
           <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
             <div style={{ display: "inline-block", fontFamily: "var(--font-heading)", fontSize: ".85rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".15em", color: "var(--color-secondary)", marginBottom: "1rem" }}>You'll Also Love</div>
@@ -182,10 +269,31 @@ export default function ProductDetail() {
         </div>
       </section>
 
+      {/* LIGHTBOX */}
+      {lightboxOpen && (
+        <div onClick={() => setLightboxOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.92)", zIndex: 300, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem", cursor: "zoom-out" }} data-testid="image-lightbox">
+          <button onClick={() => setLightboxOpen(false)} style={{ position: "absolute", top: "1.5rem", right: "1.5rem", width: 48, height: 48, borderRadius: "50%", background: "rgba(255,255,255,0.15)", border: "none", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }} data-testid="lightbox-close"><X size={24} /></button>
+          <div onClick={(e) => e.stopPropagation()} style={{ width: "min(85vw, 900px)", aspectRatio: "1", background: product.bg, borderRadius: 24, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20rem", animation: "lightboxIn .35s ease" }}>
+            {product.emoji}
+          </div>
+        </div>
+      )}
+
       <style>{`
         @media (min-width: 768px) {
           .product-grid-md { grid-template-columns: 1fr 1fr !important; gap: 4rem !important; }
         }
+        .header-logo-img { transition: transform .35s ease; }
+        .header-logo-img:hover { transform: scale(1.05) rotate(-2deg); }
+        .product-main-image { transition: transform .35s ease; }
+        .product-main-image:hover { transform: scale(1.01); }
+        .product-main-image:hover .zoom-hint { opacity: 1; transform: translateY(0); }
+        .zoom-hint { opacity: 0.85; transition: all .25s ease; }
+        .thumb-btn:hover { transform: translateY(-3px); border-color: var(--color-secondary) !important; }
+        .color-swatch:hover { transform: scale(1.12); }
+        .product-card-hover { transition: all .25s ease; }
+        .product-card-hover:hover { transform: translateY(-6px); box-shadow: 0 18px 40px -15px rgba(0,0,0,0.18); }
+        @keyframes lightboxIn { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
       `}</style>
     </div>
   );

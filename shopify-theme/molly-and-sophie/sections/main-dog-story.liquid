@@ -2,10 +2,18 @@
 {%- assign dog_role = section.settings.dog_role -%}
 {%- assign dog_bg = section.settings.bg_color | default: '#B5D6CD' -%}
 
+{%- assign hero_src = section.settings.fallback_url -%}
+{%- if section.settings.hero_image != blank -%}
+  {%- assign hero_src = section.settings.hero_image | image_url: width: 800 -%}
+{%- elsif dog_name != blank and section.settings.fallback_url == blank -%}
+  {%- assign hero_filename = dog_name | downcase | append: '-01.jpg' -%}
+  {%- assign hero_src = hero_filename | asset_url -%}
+{%- endif -%}
+
 <section class="dog-story-hero" style="background: {{ dog_bg }};" data-testid="dog-story-hero-{{ dog_name | handleize }}">
   <div class="container">
     <div class="dog-story-hero-grid">
-      <div>
+      <div class="reveal">
         <a href="/pages/about" class="back-link">← Back to Our Story</a>
         <span class="hero-eyebrow" style="margin-top:1rem;">
           <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><circle cx="12" cy="12" r="4"/></svg>
@@ -14,12 +22,8 @@
         <h1>{{ dog_name }}<br><em>{{ dog_role }}</em></h1>
         <p>{{ section.settings.tagline }}</p>
       </div>
-      <div class="dog-story-hero-img-wrap">
-        {%- if section.settings.hero_image != blank -%}
-          <img src="{{ section.settings.hero_image | image_url: width: 800 }}" alt="{{ dog_name }}">
-        {%- else -%}
-          <img src="{{ section.settings.fallback_url }}" alt="{{ dog_name }}">
-        {%- endif -%}
+      <div class="dog-story-hero-img-wrap reveal" data-lightbox="{{ hero_src }}">
+        <img src="{{ hero_src }}" alt="{{ dog_name }}">
       </div>
     </div>
   </div>
@@ -29,11 +33,11 @@
   <div class="container" style="max-width: 760px;">
     {%- for block in section.blocks -%}
       {%- if block.type == 'paragraph' -%}
-        <p>{{ block.settings.text }}</p>
+        <p class="reveal">{{ block.settings.text }}</p>
       {%- elsif block.type == 'pullquote' -%}
-        <blockquote>{{ block.settings.text }}</blockquote>
+        <blockquote class="reveal">{{ block.settings.text }}</blockquote>
       {%- elsif block.type == 'heading' -%}
-        <h2>{{ block.settings.text }}</h2>
+        <h2 class="reveal">{{ block.settings.text }}</h2>
       {%- endif -%}
     {%- endfor -%}
   </div>
@@ -41,19 +45,26 @@
 
 {%- assign gallery_blocks = section.blocks | where: 'type', 'photo' -%}
 {%- if gallery_blocks.size > 0 -%}
-<section class="dog-photobooth section" data-testid="dog-photobooth-{{ dog_name | handleize }}">
+<section class="dog-photobooth section reveal" data-testid="dog-photobooth-{{ dog_name | handleize }}">
   <div class="container">
     <div class="section-head">
       <span class="eyebrow">{{ dog_name }}'s Photo Booth</span>
       <h2>Captured <em>moments</em></h2>
+      <p style="color: rgba(31,41,55,0.6); font-size: 0.95rem;">Click any photo to enlarge.</p>
     </div>
     <div class="photobooth-grid">
       {%- for block in gallery_blocks -%}
-        <div class="photobooth-tile photobooth-tile-{{ forloop.index | modulo: 4 | plus: 1 }}">
-          {%- if block.settings.image != blank -%}
-            <img src="{{ block.settings.image | image_url: width: 800 }}" alt="{{ block.settings.caption | default: dog_name }}" loading="lazy">
-          {%- else -%}
-            <img src="{{ block.settings.fallback_url }}" alt="{{ block.settings.caption | default: dog_name }}" loading="lazy">
+        {%- assign img_src = '' -%}
+        {%- if block.settings.image != blank -%}
+          {%- assign img_src = block.settings.image | image_url: width: 1200 -%}
+        {%- elsif block.settings.asset_filename != blank -%}
+          {%- assign img_src = block.settings.asset_filename | asset_url -%}
+        {%- elsif block.settings.fallback_url != blank -%}
+          {%- assign img_src = block.settings.fallback_url -%}
+        {%- endif -%}
+        <div class="photobooth-tile photobooth-tile-{{ forloop.index | modulo: 4 | plus: 1 }} reveal" data-lightbox="{{ img_src }}">
+          {%- if img_src != '' -%}
+            <img src="{{ img_src }}" alt="{{ block.settings.caption | default: dog_name }}" loading="lazy">
           {%- endif -%}
           {%- if block.settings.caption != blank -%}
             <div class="photobooth-caption">{{ block.settings.caption }}</div>
@@ -96,7 +107,8 @@
       "type": "photo",
       "name": "Photo",
       "settings": [
-        { "type": "image_picker", "id": "image", "label": "Photo" },
+        { "type": "image_picker", "id": "image", "label": "Photo (override)" },
+        { "type": "text", "id": "asset_filename", "label": "Asset filename (e.g. jack-01.jpg)" },
         { "type": "text", "id": "fallback_url", "label": "Fallback URL" },
         { "type": "text", "id": "caption", "label": "Caption (optional)" }
       ]

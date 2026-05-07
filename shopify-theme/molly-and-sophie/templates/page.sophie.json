@@ -7,7 +7,7 @@
         "dog_role": "The Fluffy Diplomat",
         "bg_color": "#ffe4d4",
         "tagline": "Left behind when the world went quiet — now the loudest welcome in the house.",
-        "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/g2hrd7bt_IMG_9494.jpg"
+        "fallback_url": ""
       },
       "blocks": {
         "h1": { "type": "heading", "settings": { "text": "Where Sophie came from" } },
@@ -17,9 +17,16 @@
         "h2": { "type": "heading", "settings": { "text": "Who Sophie is now" } },
         "p3": { "type": "paragraph", "settings": { "text": "Sophie is, simply, a celebration. She greets every guest like they're family she hasn't seen in years. She wags her whole back end. She melts at the sound of someone saying her name. She has the kind of love that fills a room." } },
         "p4": { "type": "paragraph", "settings": { "text": "Her old family's loss became our luckiest day. And every time we ship an order, a tiny piece of it goes back to dogs still waiting for a Sophie-sized welcome of their own." } },
-        "ph1": { "type": "photo", "settings": { "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/g2hrd7bt_IMG_9494.jpg", "caption": "Sophie at her favorite snack station." } }
+        "ph1": { "type": "photo", "settings": { "asset_filename": "sophie-01.jpg", "caption": "Resident greeter, ready to welcome you." } },
+        "ph2": { "type": "photo", "settings": { "asset_filename": "sophie-02.jpg", "caption": "Snack station bliss." } },
+        "ph3": { "type": "photo", "settings": { "asset_filename": "sophie-03.jpg", "caption": "Diplomatic curls in action." } },
+        "ph4": { "type": "photo", "settings": { "asset_filename": "sophie-04.jpg", "caption": "When she hears the doorbell." } },
+        "ph5": { "type": "photo", "settings": { "asset_filename": "sophie-05.jpg", "caption": "Tail-wagging professional." } },
+        "ph6": { "type": "photo", "settings": { "asset_filename": "sophie-06.jpg", "caption": "Mid-zoomie, do not disturb." } },
+        "ph7": { "type": "photo", "settings": { "asset_filename": "sophie-07.jpg", "caption": "Window watcher." } },
+        "ph8": { "type": "photo", "settings": { "asset_filename": "sophie-08.jpg", "caption": "The fluffiest welcome in the house." } }
       },
-      "block_order": ["h1","p1","p2","q1","h2","p3","p4","ph1"]
+      "block_order": ["h1","p1","p2","q1","h2","p3","p4","ph1","ph2","ph3","ph4","ph5","ph6","ph7","ph8"]
     }
   },
   "order": ["main"]

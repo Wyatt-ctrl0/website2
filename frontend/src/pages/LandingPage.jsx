@@ -5,7 +5,7 @@ import { Download, Package, Sparkles, ShoppingBag, Phone, Mail, Heart, ExternalL
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
-const LOGO_URL = "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/qgnbhbs7_image.png";
+const LOGO_URL = "/img/logo.png";
 
 const FEATURES = [
   { icon: <Sparkles size={22} />, title: "Welcome promo popup", desc: "10% off code shown to first-time visitors. Fully editable in the theme settings." },
@@ -56,7 +56,7 @@ export default function LandingPage() {
       <header style={{ background: "var(--color-bg)", borderBottom: "1px solid rgba(31,41,55,0.08)", position: "sticky", top: 0, zIndex: 50, backdropFilter: "blur(8px)" }}>
         <div className="container" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }} data-testid="header-brand">
-            <img src={LOGO_URL} alt="Molly & Sophie" style={{ height: 56, width: "auto" }} />
+            <img src={LOGO_URL} alt="Molly & Sophie" style={{ height: 80, width: "auto" }} />
           </div>
           <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
             <Link to="/preview" className="btn btn-outline" style={{ padding: "0.65rem 1.25rem", fontSize: "0.85rem" }} data-testid="header-preview-btn">

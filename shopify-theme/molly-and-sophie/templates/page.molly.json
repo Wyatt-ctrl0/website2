@@ -7,7 +7,7 @@
         "dog_role": "The Sunshine",
         "bg_color": "#fce8da",
         "tagline": "She lost her first home to circumstance. She earned her second one in pure puppy joy.",
-        "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/yvrv5cn8_IMG_9662.jpg"
+        "fallback_url": ""
       },
       "blocks": {
         "h1": { "type": "heading", "settings": { "text": "Where Molly came from" } },
@@ -17,9 +17,16 @@
         "h2": { "type": "heading", "settings": { "text": "Who Molly is now" } },
         "p3": { "type": "paragraph", "settings": { "text": "Molly is loud, gold, and made entirely of zoomies. She wears a pink harness like she invented pink. She believes every blanket is a fort and every couch is a trampoline. She has decided that mornings are her best work." } },
         "p4": { "type": "paragraph", "settings": { "text": "She's also the reason we put a name on the door. Because if a dog this good can lose her home through no fault of her own — then a small shop run from our living room can quietly chip away at the problem, one order at a time." } },
-        "ph1": { "type": "photo", "settings": { "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/yvrv5cn8_IMG_9662.jpg", "caption": "Molly's signature smile." } }
+        "ph1": { "type": "photo", "settings": { "asset_filename": "molly-01.jpg", "caption": "Molly's signature smile." } },
+        "ph2": { "type": "photo", "settings": { "asset_filename": "molly-02.jpg", "caption": "Pink harness, full sunshine." } },
+        "ph3": { "type": "photo", "settings": { "asset_filename": "molly-03.jpg", "caption": "The zoomies are imminent." } },
+        "ph4": { "type": "photo", "settings": { "asset_filename": "molly-04.jpg", "caption": "Cuddle time, mandatory." } },
+        "ph5": { "type": "photo", "settings": { "asset_filename": "molly-05.jpg", "caption": "Living her best puppy life." } },
+        "ph6": { "type": "photo", "settings": { "asset_filename": "molly-06.jpg", "caption": "First snow, big confusion." } },
+        "ph7": { "type": "photo", "settings": { "asset_filename": "molly-07.jpg", "caption": "The reason this shop exists." } },
+        "ph8": { "type": "photo", "settings": { "asset_filename": "molly-08.jpg", "caption": "Pure goofy gold." } }
       },
-      "block_order": ["h1","p1","p2","q1","h2","p3","p4","ph1"]
+      "block_order": ["h1","p1","p2","q1","h2","p3","p4","ph1","ph2","ph3","ph4","ph5","ph6","ph7","ph8"]
     }
   },
   "order": ["main"]

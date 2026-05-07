@@ -24,9 +24,9 @@
 
     <a href="/" class="header-logo" data-testid="header-logo">
       {%- if settings.logo != blank -%}
-        <img src="{{ settings.logo | image_url: width: 240 }}" alt="{{ shop.name }}" width="120" height="60">
+        <img src="{{ settings.logo | image_url: width: 280 }}" alt="{{ shop.name }}" width="140" height="100" class="header-logo-img">
       {%- else -%}
-        <span class="header-logo-text">{{ settings.logo_text_part1 | default: 'Molly' }}<span> {{ settings.logo_text_part2 | default: '& Sophie' }}</span></span>
+        <img src="{{ 'logo.png' | asset_url }}" alt="{{ shop.name }}" style="height: 96px; width: auto;" class="header-logo-img">
       {%- endif -%}
     </a>
 

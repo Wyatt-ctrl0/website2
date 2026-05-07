@@ -7,7 +7,7 @@
         "dog_role": "The Old Soul",
         "bg_color": "#d2efef",
         "tagline": "Quiet eyes. Patient heart. The first rescue that taught us what this was all about.",
-        "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/q86lwpgi_IMG_1473.jpg"
+        "fallback_url": ""
       },
       "blocks": {
         "h1": { "type": "heading", "settings": { "text": "Where Jack came from" } },
@@ -17,9 +17,16 @@
         "h2": { "type": "heading", "settings": { "text": "Who Jack is now" } },
         "p3": { "type": "paragraph", "settings": { "text": "Today, Jack is our resident philosopher. He is the calmest member of the pack — the one who watches Sophie and Molly do zoomies with the wise expression of someone who has seen things. He has a favorite sunbeam in the kitchen at 2pm. He has a favorite blanket. He has a family that isn't going anywhere." } },
         "p4": { "type": "paragraph", "settings": { "text": "Jack is the reason we started Molly & Sophie. Because every dog like him deserves a couch, a sunbeam, and someone coming home." } },
-        "ph1": { "type": "photo", "settings": { "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/q86lwpgi_IMG_1473.jpg", "caption": "Jack, mid-thoughtful blink." } }
+        "ph1": { "type": "photo", "settings": { "asset_filename": "jack-01.jpg", "caption": "Jack's signature thoughtful blink." } },
+        "ph2": { "type": "photo", "settings": { "asset_filename": "jack-02.jpg", "caption": "Sunbeam mode, fully engaged." } },
+        "ph3": { "type": "photo", "settings": { "asset_filename": "jack-03.jpg", "caption": "Ears for days." } },
+        "ph4": { "type": "photo", "settings": { "asset_filename": "jack-04.jpg", "caption": "Couch boss, certified." } },
+        "ph5": { "type": "photo", "settings": { "asset_filename": "jack-05.jpg", "caption": "Watching the world go by." } },
+        "ph6": { "type": "photo", "settings": { "asset_filename": "jack-06.jpg", "caption": "Out for a sniff." } },
+        "ph7": { "type": "photo", "settings": { "asset_filename": "jack-07.jpg", "caption": "The wisdom of a small old man." } },
+        "ph8": { "type": "photo", "settings": { "asset_filename": "jack-08.jpg", "caption": "Snack negotiations in progress." } }
       },
-      "block_order": ["h1","p1","p2","q1","h2","p3","p4","ph1"]
+      "block_order": ["h1","p1","p2","q1","h2","p3","p4","ph1","ph2","ph3","ph4","ph5","ph6","ph7","ph8"]
     }
   },
   "order": ["main"]

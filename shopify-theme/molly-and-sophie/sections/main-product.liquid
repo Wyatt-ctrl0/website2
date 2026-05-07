@@ -10,7 +10,7 @@
 
     <div class="product-grid-main">
       <div class="product-gallery">
-        <div class="main-img">
+        <div class="main-img" data-lightbox="{{ product.featured_image | image_url: width: 2000 }}">
           {%- if product.featured_image != blank -%}
             <img src="{{ product.featured_image | image_url: width: 1200 }}" alt="{{ product.title }}" data-product-main-img>
           {%- else -%}
@@ -91,6 +91,46 @@
             <button type="submit" name="checkout" class="btn btn-secondary btn-block" style="margin-top:0.75rem;" data-testid="buy-now-btn">⚡ Buy It Now</button>
           {%- endif -%}
         {%- endform -%}
+
+        {%- comment -%} SPECS / DIMENSIONS / TESTER'S NOTE {%- endcomment -%}
+        <div class="product-info-stack" data-testid="product-specs-section">
+          <h3 class="product-info-stack-heading">Product details</h3>
+
+          <div class="info-card">
+            <div class="info-card-title">📋 Specs</div>
+            <dl class="info-dl">
+              {%- assign spec_pairs = product.metafields.custom.specs | default: 'Material|Premium pet-safe blend,Care|Spot-clean or hand-wash,Country of origin|USA,Best for|Small to large breeds' | split: ',' -%}
+              {%- for pair in spec_pairs -%}
+                {%- assign kv = pair | split: '|' -%}
+                <dt>{{ kv[0] }}</dt><dd>{{ kv[1] }}</dd>
+              {%- endfor -%}
+            </dl>
+          </div>
+
+          <div class="info-card">
+            <div class="info-card-title">📐 Dimensions</div>
+            <table class="info-table">
+              <tbody>
+                {%- assign dim_rows = product.metafields.custom.dimensions | default: 'Small|5 × 4 × 1 in · 0.3 lb,Medium|7 × 5 × 1.5 in · 0.5 lb,Large|9 × 6 × 2 in · 0.8 lb' | split: ',' -%}
+                {%- for row in dim_rows -%}
+                  {%- assign kv = row | split: '|' -%}
+                  <tr><td>{{ kv[0] }}</td><td>{{ kv[1] }}</td></tr>
+                {%- endfor -%}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="info-card info-card-tester">
+            <div class="tester-header">
+              <div class="tester-avatar">{{ product.metafields.custom.tester_initial | default: 'S' }}</div>
+              <div>
+                <div class="tester-name">{{ product.metafields.custom.tester_name | default: 'Sophie' }}'s tester note</div>
+                <div class="tester-role">Chief product officer (4 paws, 2 ears)</div>
+              </div>
+            </div>
+            <p class="tester-note">"{{ product.metafields.custom.tester_note | default: 'Approved with three full tail-wags and a stolen sock as celebration. She tried to share with Molly. Molly declined. We call that 5 stars.' }}"</p>
+          </div>
+        </div>
 
         <details class="product-accordion" open>
           <summary>What pet parents love</summary>
