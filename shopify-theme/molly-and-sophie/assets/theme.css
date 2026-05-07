@@ -1234,6 +1234,146 @@ p { margin: 0 0 1rem; }
 .product-features li { padding: 0.5rem 0; display: flex; align-items: center; gap: 0.75rem; font-size: 0.95rem; }
 .product-features li::before { content: '✓'; color: var(--color-secondary); font-weight: 700; font-size: 1.25rem; }
 
+/* ---- product-page FAQ (under image, left column) ---- */
+.product-faq { margin-top: 1.75rem; }
+.product-faq-head { margin-bottom: 1rem; }
+.product-faq-eyebrow {
+  display: inline-block;
+  color: var(--color-secondary);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.78rem;
+  margin-bottom: 0.35rem;
+}
+.product-faq-heading {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0;
+  color: var(--color-text);
+}
+.product-faq-heading em { color: var(--color-primary); font-style: italic; }
+.product-faq-list { display: grid; gap: 0.6rem; }
+.product-faq-item {
+  background: var(--color-cream);
+  border-radius: 16px;
+  border: 2px solid transparent;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  overflow: hidden;
+}
+.product-faq-item[open] {
+  border-color: rgba(232,118,90,0.3);
+  box-shadow: 0 4px 14px rgba(31,41,55,0.05);
+}
+.product-faq-item summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 1rem 1.15rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.98rem;
+  color: var(--color-text);
+}
+.product-faq-item summary::-webkit-details-marker { display: none; }
+.product-faq-icon {
+  width: 26px; height: 26px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 999px;
+  background: var(--color-bg);
+  color: var(--color-primary);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
+  transition: transform 0.25s ease, background 0.25s ease;
+  flex-shrink: 0;
+}
+.product-faq-item[open] .product-faq-icon {
+  transform: rotate(45deg);
+  background: var(--color-primary);
+  color: var(--color-cream);
+}
+.product-faq-answer {
+  padding: 0 1.15rem 1.05rem;
+  color: rgba(31,41,55,0.78);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+/* ---- product comparison chart ---- */
+.product-compare-section { padding: 4rem 0; background: var(--color-cream); }
+.product-compare-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  align-items: center;
+}
+@media (min-width: 900px) {
+  .product-compare-grid { grid-template-columns: 1.15fr 1fr; gap: 3.5rem; }
+}
+.product-compare-chart {
+  background: var(--color-bg);
+  border: 2px solid var(--color-mint);
+  border-radius: 20px;
+  padding: 1.25rem 1.25rem 1rem;
+  box-shadow: 0 8px 24px rgba(31,41,55,0.06);
+}
+.compare-svg { width: 100%; height: auto; display: block; }
+.compare-svg .cmp-frame { fill: var(--color-bg); stroke: var(--color-mint); }
+.compare-svg .cmp-axis-unit { fill: var(--color-text); }
+.compare-svg .cmp-x-label { fill: var(--color-secondary); }
+.compare-svg .cmp-line-ours { stroke: var(--color-primary); }
+.compare-svg .cmp-dot-ours { fill: var(--color-primary); stroke: var(--color-bg); }
+.compare-svg .cmp-legend-box { fill: var(--color-cream); stroke: rgba(31,41,55,0.1); }
+.compare-svg .cmp-legend-text { fill: var(--color-text); }
+.compare-caption {
+  text-align: center;
+  font-size: 0.82rem;
+  color: rgba(31,41,55,0.55);
+  margin: 0.25rem 0 0;
+  font-style: italic;
+}
+.product-compare-headline {
+  font-family: var(--font-heading);
+  font-size: clamp(1.3rem, 2vw, 1.75rem);
+  font-weight: 800;
+  line-height: 1.25;
+  margin: 0 0 1rem;
+  color: var(--color-text);
+}
+.product-compare-blurb {
+  color: rgba(31,41,55,0.78);
+  font-size: 1rem;
+  line-height: 1.7;
+  margin: 0 0 1.25rem;
+}
+.product-compare-bullets {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.65rem;
+}
+.product-compare-bullets li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  font-size: 0.97rem;
+  color: var(--color-text);
+}
+.product-compare-bullets li::before {
+  content: '✓';
+  color: var(--color-secondary);
+  font-weight: 800;
+  font-size: 1.1rem;
+  line-height: 1.4;
+}
+.product-compare-bullets strong { color: var(--color-primary); }
+
 /* ============ COLLECTION PAGE ============ */
 .collection-header {
   background: var(--color-cream);
