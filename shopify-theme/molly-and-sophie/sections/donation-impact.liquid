@@ -1,0 +1,71 @@
+<section class="donation-impact reveal" data-testid="donation-impact">
+  <div class="container">
+    <div class="impact-head">
+      <div class="eyebrow">{{ section.settings.eyebrow | default: 'Real Impact, Real Receipts' }}</div>
+      <h2>{{ section.settings.heading | default: 'Together, the pack has given <em>back</em>' }}</h2>
+      <p>{{ section.settings.subheading | default: "Every order chips in. Here's the impact this community has made so far:" }}</p>
+    </div>
+    <div class="impact-grid">
+      {% for block in section.blocks %}
+        <div class="impact-stat" {{ block.shopify_attributes }} data-testid="impact-stat-{{ forloop.index }}">
+          <div class="impact-num">{{ block.settings.number }}</div>
+          <div class="impact-label">{{ block.settings.label }}</div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="impact-actions">
+      <a href="{{ section.settings.primary_link | default: '/pages/giving-back' }}" class="btn btn-light" data-testid="impact-primary">{{ section.settings.primary_text | default: 'How It Works' }}</a>
+      <a href="{{ section.settings.secondary_link | default: 'https://instagram.com/shopmollyandsophie' }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light" data-testid="impact-secondary">{{ section.settings.secondary_text | default: 'See the Receipts on IG' }}</a>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+.donation-impact { padding: 4rem 0; background: linear-gradient(135deg, var(--color-secondary), #4ea3a7); color: #fff; }
+.donation-impact .impact-head { text-align: center; margin-bottom: 2.5rem; max-width: 720px; margin-left: auto; margin-right: auto; }
+.donation-impact .eyebrow { display: inline-block; font-family: var(--font-heading); font-size: .85rem; font-weight: 700; text-transform: uppercase; letter-spacing: .2em; color: rgba(255,255,255,0.85); margin-bottom: 1rem; }
+.donation-impact h2 { color: #fff; margin: 0 0 .75rem; font-size: clamp(1.85rem, 4vw, 3rem); }
+.donation-impact p { color: rgba(255,255,255,0.9); margin: 0; }
+.impact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; max-width: 920px; margin: 0 auto 2.5rem; }
+.impact-stat { background: rgba(255,255,255,0.12); backdrop-filter: blur(6px); border-radius: 24px; padding: 1.75rem 1rem; text-align: center; border: 1px solid rgba(255,255,255,0.2); }
+.impact-num { font-family: var(--font-heading); font-weight: 800; font-size: clamp(2rem, 4vw, 2.75rem); line-height: 1; margin-bottom: .5rem; }
+.impact-label { font-size: .9rem; color: rgba(255,255,255,0.85); text-transform: uppercase; letter-spacing: .1em; font-weight: 600; }
+.impact-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.btn-outline-light { border: 2px solid rgba(255,255,255,0.7); color: #fff; background: transparent; }
+.btn-outline-light:hover { background: rgba(255,255,255,0.15); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Donation Impact",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Real Impact, Real Receipts" },
+    { "type": "text", "id": "heading", "label": "Heading (HTML allowed)", "default": "Together, the pack has given <em>back</em>" },
+    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "Every order chips in. Here's the impact this community has made so far:" },
+    { "type": "text", "id": "primary_text", "label": "Primary button text", "default": "How It Works" },
+    { "type": "url", "id": "primary_link", "label": "Primary button link", "default": "/pages/giving-back" },
+    { "type": "text", "id": "secondary_text", "label": "Secondary button text", "default": "See the Receipts on IG" },
+    { "type": "url", "id": "secondary_link", "label": "Secondary button link" }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Stat",
+      "settings": [
+        { "type": "text", "id": "number", "label": "Number / amount", "default": "$4,287" },
+        { "type": "text", "id": "label", "label": "Label", "default": "Donated to rescues" }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [{
+    "name": "Donation Impact",
+    "blocks": [
+      { "type": "stat", "settings": { "number": "$4,287", "label": "Donated to rescues" } },
+      { "type": "stat", "settings": { "number": "12", "label": "Rescues supported" } },
+      { "type": "stat", "settings": { "number": "8,341", "label": "Orders shipped" } },
+      { "type": "stat", "settings": { "number": "100%", "label": "Receipts posted" } }
+    ]
+  }]
+}
+{% endschema %}

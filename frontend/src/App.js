@@ -5,6 +5,7 @@ import LandingPage from "./pages/LandingPage";
 import ThemePreview from "./pages/ThemePreview";
 import ProductDetail from "./pages/ProductDetail";
 import DogStory from "./pages/DogStory";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/preview" element={<ThemePreview />} />
           <Route path="/preview/product/:slug" element={<ProductDetail />} />
           <Route path="/preview/dog/:slug" element={<DogStory />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </div>

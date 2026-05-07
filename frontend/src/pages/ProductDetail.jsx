@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, ShoppingBag, Truck, RotateCcw, Heart, ChevronDown, X, ZoomIn, Ruler, FileText, Award } from "lucide-react";
-import { PRODUCTS } from "./ThemePreview";
+import { ArrowLeft, ShoppingBag, Truck, RotateCcw, Heart, ChevronDown, X, ZoomIn, Ruler, FileText, Award, Flame } from "lucide-react";
+import { PRODUCTS, StarRating } from "./ThemePreview";
 
 const LOGO_URL = "/img/logo.png";
 
@@ -117,8 +117,8 @@ export default function ProductDetail() {
               <h1 style={{ fontSize: "clamp(1.75rem, 3vw, 2.75rem)", marginBottom: ".75rem" }} data-testid="product-name">{product.name}</h1>
 
               <div style={{ display: "flex", gap: ".5rem", alignItems: "center", marginBottom: "1rem" }}>
-                <span style={{ color: "#f5b800", letterSpacing: ".1em" }}>★★★★★</span>
-                <span style={{ color: "rgba(31,41,55,0.6)", fontSize: ".9rem" }}>(124 happy pets)</span>
+                <StarRating rating={product.rating || 4.8} reviews={product.reviews || 124} size=".95rem" />
+                <a href="#reviews" onClick={(e) => { e.preventDefault(); document.getElementById("reviews")?.scrollIntoView({ behavior: "smooth" }); }} style={{ color: "var(--color-secondary)", fontSize: ".85rem", fontWeight: 600 }} data-testid="see-reviews-link">See reviews</a>
               </div>
 
               <div style={{ marginBottom: "1.25rem" }}>
@@ -132,6 +132,16 @@ export default function ProductDetail() {
                 <TrustPill icon={<RotateCcw size={14} />} text="30-day returns" />
                 <TrustPill icon={<Heart size={14} />} text="1% to rescues" />
               </div>
+
+              {/* Stock urgency */}
+              {(product.stock || 0) > 0 && (product.stock || 99) <= 10 && (
+                <div style={{ display: "flex", alignItems: "center", gap: ".75rem", background: "rgba(232,118,90,0.1)", border: "1.5px dashed var(--color-primary)", borderRadius: 14, padding: ".75rem 1rem", marginBottom: "1.25rem" }} data-testid="stock-urgency">
+                  <Flame size={18} style={{ color: "var(--color-primary)", flexShrink: 0 }} />
+                  <div style={{ fontSize: ".9rem", fontWeight: 700, color: "var(--color-text)" }}>
+                    Only <span style={{ color: "var(--color-primary)" }}>{product.stock} left</span> — selling fast
+                  </div>
+                </div>
+              )}
 
               <p style={{ fontSize: "1.05rem", lineHeight: 1.7, color: "rgba(31,41,55,0.85)", marginBottom: "1.5rem" }} data-testid="product-description">{product.desc}</p>
 
@@ -248,6 +258,47 @@ export default function ProductDetail() {
         </div>
       </section>
 
+      {/* FREQUENTLY BOUGHT TOGETHER (Pack Bundle) */}
+      <section id="bundle" style={{ padding: "4rem 0", background: "var(--color-bg)" }} className="reveal" data-testid="bundle-section">
+        <div className="container" style={{ maxWidth: 980 }}>
+          <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+            <div style={{ display: "inline-block", fontFamily: "var(--font-heading)", fontSize: ".85rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".15em", color: "var(--color-secondary)", marginBottom: ".75rem" }}>Build Your Pack</div>
+            <h2 style={{ fontSize: "clamp(1.5rem, 3vw, 2.25rem)", margin: 0 }}>Frequently bought <em>together</em></h2>
+          </div>
+          {(() => {
+            const bundleItems = [product, ...PRODUCTS.filter(p => p.slug !== product.slug).slice(0, 2)];
+            const bundleTotal = bundleItems.reduce((s, p) => s + p.price, 0);
+            const bundleCompareAt = bundleItems.reduce((s, p) => s + (p.compareAt || p.price), 0);
+            const bundleSave = (bundleCompareAt - bundleTotal + bundleTotal * 0.05).toFixed(2); // mock 5% extra discount
+            const bundlePrice = (bundleTotal * 0.95).toFixed(2);
+            return (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "1.5rem", alignItems: "center" }} className="bundle-grid-md">
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: ".75rem", flexWrap: "wrap" }}>
+                  {bundleItems.map((p, i) => (
+                    <React.Fragment key={p.slug}>
+                      <div style={{ background: p.bg, borderRadius: 18, width: 130, height: 130, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: ".5rem", flexShrink: 0 }} data-testid={`bundle-item-${i}`}>
+                        <div style={{ fontSize: "3rem" }}>{p.emoji}</div>
+                        <div style={{ fontSize: ".7rem", fontFamily: "var(--font-heading)", fontWeight: 700, marginTop: ".25rem", lineHeight: 1.2 }}>{p.name}</div>
+                      </div>
+                      {i < bundleItems.length - 1 && <span style={{ fontSize: "1.5rem", color: "var(--color-primary)", fontWeight: 800 }}>+</span>}
+                    </React.Fragment>
+                  ))}
+                </div>
+                <div style={{ background: "var(--color-cream)", borderRadius: 24, padding: "1.75rem", textAlign: "center" }}>
+                  <div style={{ fontSize: ".85rem", color: "rgba(31,41,55,0.6)", textDecoration: "line-through", marginBottom: ".25rem" }}>${bundleCompareAt.toFixed(2)}</div>
+                  <div style={{ fontFamily: "var(--font-heading)", fontWeight: 800, fontSize: "2rem", color: "var(--color-primary)", lineHeight: 1 }} data-testid="bundle-total">Bundle: ${bundlePrice}</div>
+                  <div style={{ display: "inline-block", marginTop: ".5rem", background: "rgba(95,180,184,0.15)", color: "var(--color-secondary)", padding: ".25rem .75rem", borderRadius: 999, fontSize: ".8rem", fontWeight: 700 }}>You save ${bundleSave}</div>
+                  <button onClick={handleAdd} className="btn btn-primary btn-block" style={{ marginTop: "1.25rem" }} data-testid="add-bundle-btn">
+                    <ShoppingBag size={18} /> Add Bundle to Cart
+                  </button>
+                  <p style={{ fontSize: ".75rem", color: "rgba(31,41,55,0.55)", marginTop: ".75rem", margin: ".75rem 0 0" }}>5% off when bought together</p>
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      </section>
+
       {/* RECOMMENDATIONS */}
       <section style={{ padding: "4rem 0", background: "var(--color-cream)" }} className="reveal">
         <div className="container">
@@ -269,6 +320,52 @@ export default function ProductDetail() {
         </div>
       </section>
 
+      {/* REVIEWS */}
+      <section id="reviews" style={{ padding: "4rem 0", background: "var(--color-bg)" }} className="reveal" data-testid="reviews-section">
+        <div className="container" style={{ maxWidth: 920 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "2rem", marginBottom: "2.5rem" }} className="reviews-summary-md">
+            <div style={{ textAlign: "center", background: "var(--color-cream)", borderRadius: 24, padding: "2rem 1.5rem" }}>
+              <div style={{ fontFamily: "var(--font-heading)", fontWeight: 800, fontSize: "3.5rem", color: "var(--color-primary)", lineHeight: 1 }} data-testid="reviews-avg">{(product.rating || 4.8).toFixed(1)}</div>
+              <div style={{ color: "#f5b800", fontSize: "1.4rem", letterSpacing: ".1em", marginTop: ".25rem" }}>★★★★★</div>
+              <div style={{ fontSize: ".9rem", color: "rgba(31,41,55,0.65)", marginTop: ".5rem" }}>Based on {product.reviews || 124} verified reviews</div>
+            </div>
+            <div>
+              {[5, 4, 3, 2, 1].map((s) => {
+                const pct = s === 5 ? 78 : s === 4 ? 18 : s === 3 ? 3 : s === 2 ? 1 : 0;
+                return (
+                  <div key={s} style={{ display: "flex", alignItems: "center", gap: ".75rem", marginBottom: ".5rem" }} data-testid={`rating-bar-${s}`}>
+                    <span style={{ fontSize: ".85rem", fontWeight: 700, width: 24 }}>{s}★</span>
+                    <div style={{ flex: 1, height: 8, background: "rgba(31,41,55,0.08)", borderRadius: 999, overflow: "hidden" }}>
+                      <div style={{ width: `${pct}%`, height: "100%", background: "var(--color-primary)" }} />
+                    </div>
+                    <span style={{ fontSize: ".8rem", color: "rgba(31,41,55,0.6)", width: 36, textAlign: "right" }}>{pct}%</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "1.25rem" }}>
+            {[
+              { name: "Hannah B.", pet: "Mom of Bella", rating: 5, text: "My pup is OBSESSED. We've ordered three times already. The packaging note had me tearing up." },
+              { name: "Diego R.", pet: "Dad of Cooper", rating: 5, text: "Quality is unreal for the price. And knowing 1% goes to rescue is the cherry on top." },
+              { name: "Tara K.", pet: "Mom of Olive & Pip", rating: 4, text: "Great product. Shipping was a touch slow but customer service was incredibly kind." },
+            ].map((r, i) => (
+              <div key={i} style={{ background: "#fff", padding: "1.5rem", borderRadius: 20, boxShadow: "0 4px 16px -8px rgba(0,0,0,0.08)" }} data-testid={`review-card-${i}`}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: ".75rem" }}>
+                  <div>
+                    <div style={{ fontFamily: "var(--font-heading)", fontWeight: 700 }}>{r.name}</div>
+                    <div style={{ fontSize: ".8rem", color: "rgba(31,41,55,0.6)" }}>{r.pet}</div>
+                  </div>
+                  <span style={{ background: "rgba(95,180,184,0.15)", color: "var(--color-secondary)", fontSize: ".7rem", fontWeight: 700, padding: ".25rem .55rem", borderRadius: 999 }}>✓ Verified</span>
+                </div>
+                <div style={{ color: "#f5b800", letterSpacing: ".1em", marginBottom: ".5rem" }}>{"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}</div>
+                <p style={{ margin: 0, fontSize: ".95rem", color: "rgba(31,41,55,0.85)", lineHeight: 1.6 }}>"{r.text}"</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* LIGHTBOX */}
       {lightboxOpen && (
         <div onClick={() => setLightboxOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.92)", zIndex: 300, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem", cursor: "zoom-out" }} data-testid="image-lightbox">
@@ -282,6 +379,12 @@ export default function ProductDetail() {
       <style>{`
         @media (min-width: 768px) {
           .product-grid-md { grid-template-columns: 1fr 1fr !important; gap: 4rem !important; }
+          .bundle-grid-md { grid-template-columns: 1.4fr 1fr !important; gap: 2.5rem !important; }
+          .reviews-summary-md { grid-template-columns: 260px 1fr !important; align-items: center; gap: 3rem !important; }
+        }
+        @media (max-width: 767px) {
+          .pdp-sticky-cta { display: flex !important; }
+          body { padding-bottom: 80px; }
         }
         .header-logo-img { transition: transform .35s ease; }
         .header-logo-img:hover { transform: scale(1.05) rotate(-2deg); }
@@ -295,6 +398,17 @@ export default function ProductDetail() {
         .product-card-hover:hover { transform: translateY(-6px); box-shadow: 0 18px 40px -15px rgba(0,0,0,0.18); }
         @keyframes lightboxIn { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
       `}</style>
+
+      {/* STICKY MOBILE ADD-TO-CART */}
+      <div className="pdp-sticky-cta" style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "var(--color-bg)", borderTop: "2px solid rgba(31,41,55,0.08)", padding: ".75rem 1rem", display: "none", alignItems: "center", gap: ".75rem", zIndex: 50, boxShadow: "0 -10px 30px -10px rgba(0,0,0,0.1)" }} data-testid="sticky-add-cart">
+        <div style={{ flexShrink: 0 }}>
+          <div style={{ fontFamily: "var(--font-heading)", fontSize: ".75rem", fontWeight: 700, color: "rgba(31,41,55,0.6)", textTransform: "uppercase", letterSpacing: ".08em" }}>{product.name.length > 18 ? product.name.slice(0, 18) + "…" : product.name}</div>
+          <div style={{ fontFamily: "var(--font-heading)", fontWeight: 800, fontSize: "1.1rem", color: "var(--color-primary)" }}>${(product.price * qty).toFixed(2)}</div>
+        </div>
+        <button onClick={handleAdd} className="btn btn-primary" style={{ flex: 1 }} data-testid="sticky-add-btn">
+          <ShoppingBag size={16} /> {adding ? "✓ Added!" : "Add to Cart"}
+        </button>
+      </div>
     </div>
   );
 }

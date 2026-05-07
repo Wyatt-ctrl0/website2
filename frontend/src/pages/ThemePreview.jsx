@@ -24,15 +24,30 @@ export const RESCUE_IMG = {
 };
 
 const PRODUCTS = [
-  { slug: "salmon-soft-treats", category: "treats", name: "Salmon Soft Treats", price: 14.99, compareAt: 19.99, emoji: "🦴", bg: "#ffe4d4", badge: "Bestseller", vendor: "Molly & Sophie", desc: "Slow-baked, soft, and irresistible. Made with real wild-caught salmon and zero junk — Jack approved." },
-  { slug: "cozy-donut-bed", category: "beds", name: "Cozy Donut Bed", price: 49.99, emoji: "🛏️", bg: "#d2efef", desc: "A plush, calming donut bed with raised edges for that secure 'I am safe and loved' feeling. Sophie's nightly choice." },
-  { slug: "squeaky-plush-carrot", category: "toys", name: "Squeaky Plush Carrot", price: 18.99, emoji: "🎾", bg: "#fce8da", desc: "Crinkles, squeaks, and survives at least three rounds of zoomies. Tested rigorously by Molly." },
-  { slug: "adventure-harness", category: "walks", name: "Adventure Harness", price: 34.99, emoji: "🦮", bg: "#e8f0d4", badge: "New", desc: "Padded, no-pull, comes in five colors. Great for hikes, casual sniff walks, and dramatic photo shoots." },
-  { slug: "calming-chew-sticks", category: "treats", name: "Calming Chew Sticks", price: 22.99, emoji: "🌿", bg: "#ffe4d4", desc: "Natural calming chews with chamomile and L-theanine. Perfect for vet visits, fireworks, and stressful Mondays." },
-  { slug: "premium-kibble-bowl", category: "beds", name: "Premium Kibble Bowl", price: 26.99, emoji: "🥣", bg: "#fce8da", desc: "Slow-feeder ceramic bowl that prevents gulping and looks gorgeous on your floor." },
-  { slug: "plaid-travel-coat", category: "walks", name: "Plaid Travel Coat", price: 44.99, emoji: "🧥", bg: "#e8f0d4", desc: "Water-resistant plaid coat with reflective trim. Because chilly walks deserve style." },
-  { slug: "salmon-jerky-bites", category: "treats", name: "Salmon Jerky Bites", price: 16.99, compareAt: 21.99, emoji: "🐟", bg: "#d2efef", desc: "High-protein single-ingredient training treats. Tiny pieces, big tail-wags." },
+  { slug: "salmon-soft-treats", category: "treats", name: "Salmon Soft Treats", price: 14.99, compareAt: 19.99, emoji: "🦴", bg: "#ffe4d4", badge: "Bestseller", vendor: "Molly & Sophie", rating: 4.9, reviews: 312, stock: 8, desc: "Slow-baked, soft, and irresistible. Made with real wild-caught salmon and zero junk — Jack approved." },
+  { slug: "cozy-donut-bed", category: "beds", name: "Cozy Donut Bed", price: 49.99, emoji: "🛏️", bg: "#d2efef", rating: 4.8, reviews: 246, stock: 14, desc: "A plush, calming donut bed with raised edges for that secure 'I am safe and loved' feeling. Sophie's nightly choice." },
+  { slug: "squeaky-plush-carrot", category: "toys", name: "Squeaky Plush Carrot", price: 18.99, emoji: "🎾", bg: "#fce8da", rating: 4.7, reviews: 158, stock: 22, desc: "Crinkles, squeaks, and survives at least three rounds of zoomies. Tested rigorously by Molly." },
+  { slug: "adventure-harness", category: "walks", name: "Adventure Harness", price: 34.99, emoji: "🦮", bg: "#e8f0d4", badge: "New", rating: 4.9, reviews: 89, stock: 11, desc: "Padded, no-pull, comes in five colors. Great for hikes, casual sniff walks, and dramatic photo shoots." },
+  { slug: "calming-chew-sticks", category: "treats", name: "Calming Chew Sticks", price: 22.99, emoji: "🌿", bg: "#ffe4d4", rating: 4.6, reviews: 134, stock: 19, desc: "Natural calming chews with chamomile and L-theanine. Perfect for vet visits, fireworks, and stressful Mondays." },
+  { slug: "premium-kibble-bowl", category: "beds", name: "Premium Kibble Bowl", price: 26.99, emoji: "🥣", bg: "#fce8da", rating: 4.8, reviews: 201, stock: 6, desc: "Slow-feeder ceramic bowl that prevents gulping and looks gorgeous on your floor." },
+  { slug: "plaid-travel-coat", category: "walks", name: "Plaid Travel Coat", price: 44.99, emoji: "🧥", bg: "#e8f0d4", rating: 4.7, reviews: 73, stock: 9, desc: "Water-resistant plaid coat with reflective trim. Because chilly walks deserve style." },
+  { slug: "salmon-jerky-bites", category: "treats", name: "Salmon Jerky Bites", price: 16.99, compareAt: 21.99, emoji: "🐟", bg: "#d2efef", rating: 4.9, reviews: 287, stock: 4, desc: "High-protein single-ingredient training treats. Tiny pieces, big tail-wags." },
 ];
+
+// Reusable star rating component (also used by ProductDetail)
+export const StarRating = ({ rating = 5, reviews, size = ".8rem", showCount = true, color = "#f5b800" }) => {
+  const full = Math.floor(rating);
+  const half = rating - full >= 0.5;
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: ".4rem", fontSize: size, fontFamily: "var(--font-heading)", fontWeight: 700 }} data-testid="star-rating">
+      <span style={{ color, letterSpacing: ".05em" }}>
+        {"★".repeat(full)}{half ? "½" : ""}{"☆".repeat(5 - full - (half ? 1 : 0))}
+      </span>
+      <span style={{ color: "rgba(31,41,55,0.6)", fontWeight: 600 }}>{rating.toFixed(1)}</span>
+      {showCount && reviews != null && <span style={{ color: "rgba(31,41,55,0.5)", fontWeight: 500 }}>({reviews})</span>}
+    </span>
+  );
+};
 
 export { PRODUCTS };
 
@@ -228,6 +243,28 @@ export default function ThemePreview() {
         </div>
       </section>
 
+      {/* TRUST BADGES STRIP */}
+      <section style={{ background: "var(--color-bg)", borderBottom: "1px dashed rgba(31,41,55,0.1)", padding: "1.25rem 0" }} data-testid="preview-trust-strip">
+        <div className="container">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "1rem", textAlign: "center" }}>
+            {[
+              { icon: "🚚", title: "Free shipping $50+", sub: "Ships from the USA" },
+              { icon: "↩️", title: "30-day returns", sub: "No questions asked" },
+              { icon: "💝", title: "1% to rescues", sub: "Every single order" },
+              { icon: "🔒", title: "Secure checkout", sub: "256-bit encryption" },
+            ].map((b) => (
+              <div key={b.title} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: ".75rem" }} data-testid={`trust-${b.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}>
+                <div style={{ fontSize: "1.65rem" }} aria-hidden>{b.icon}</div>
+                <div style={{ textAlign: "left" }}>
+                  <div style={{ fontFamily: "var(--font-heading)", fontWeight: 800, fontSize: ".9rem", lineHeight: 1.2 }}>{b.title}</div>
+                  <div style={{ fontSize: ".75rem", color: "rgba(31,41,55,0.6)" }}>{b.sub}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CATEGORIES */}
       <section style={{ padding: "5rem 0" }} data-testid="preview-categories">
         <div className="container">
@@ -264,6 +301,9 @@ export default function ThemePreview() {
                 <div style={{ padding: "1.25rem", flex: 1, display: "flex", flexDirection: "column" }}>
                   <div style={{ fontSize: ".75rem", textTransform: "uppercase", letterSpacing: ".1em", color: "var(--color-secondary)", fontWeight: 700, fontFamily: "var(--font-heading)", marginBottom: ".4rem" }}>Molly &amp; Sophie</div>
                   <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1.05rem", margin: "0 0 .5rem" }}>{p.name}</h3>
+                  <div style={{ marginBottom: ".5rem" }}>
+                    <StarRating rating={p.rating} reviews={p.reviews} />
+                  </div>
                   <div style={{ marginBottom: ".75rem" }}>
                     {p.compareAt && <span style={{ color: "rgba(31,41,55,0.5)", textDecoration: "line-through", marginRight: ".5rem", fontWeight: 500 }}>${p.compareAt.toFixed(2)}</span>}
                     <span style={{ fontWeight: 800 }}>${p.price.toFixed(2)}</span>
@@ -300,15 +340,30 @@ export default function ThemePreview() {
         </div>
       </section>
 
-      {/* DONATION */}
-      <section style={{ padding: "3rem 0", background: "linear-gradient(135deg, var(--color-secondary), #4ea3a7)", color: "#fff" }} data-testid="preview-donation">
+      {/* DONATION IMPACT COUNTER */}
+      <section style={{ padding: "4rem 0", background: "linear-gradient(135deg, var(--color-secondary), #4ea3a7)", color: "#fff" }} data-testid="preview-donation">
         <div className="container">
-          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "2rem", alignItems: "center" }} className="donation-grid-md">
-            <div>
-              <h2 style={{ color: "#fff", margin: "0 0 .5rem" }}>1% of every order. Donated monthly.</h2>
-              <p style={{ color: "rgba(255,255,255,0.9)", margin: 0 }}>We're not affiliated with any single charity — every month, we hand-pick a trusted pet rescue and donate 1% of orders directly to them.</p>
-            </div>
+          <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
+            <div style={{ display: "inline-block", fontFamily: "var(--font-heading)", fontSize: ".85rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".2em", color: "rgba(255,255,255,0.85)", marginBottom: "1rem" }}>Real Impact, Real Receipts</div>
+            <h2 style={{ color: "#fff", margin: "0 0 .75rem", fontSize: "clamp(1.85rem, 4vw, 3rem)" }}>Together, the pack has given <em>back</em></h2>
+            <p style={{ color: "rgba(255,255,255,0.9)", margin: 0, maxWidth: 620, marginLeft: "auto", marginRight: "auto" }}>Every order chips in. Here's the impact this community has made so far:</p>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "1.5rem", maxWidth: 920, margin: "0 auto 2.5rem" }} data-testid="impact-stats">
+            {[
+              { num: "$4,287", label: "Donated to rescues", testid: "impact-donated" },
+              { num: "12", label: "Rescues supported", testid: "impact-rescues" },
+              { num: "8,341", label: "Orders shipped", testid: "impact-orders" },
+              { num: "100%", label: "Receipts posted", testid: "impact-receipts" },
+            ].map((s) => (
+              <div key={s.label} style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(6px)", borderRadius: 24, padding: "1.75rem 1rem", textAlign: "center", border: "1px solid rgba(255,255,255,0.2)" }} data-testid={s.testid}>
+                <div style={{ fontFamily: "var(--font-heading)", fontWeight: 800, fontSize: "clamp(2rem, 4vw, 2.75rem)", lineHeight: 1, marginBottom: ".5rem" }}>{s.num}</div>
+                <div style={{ fontSize: ".9rem", color: "rgba(255,255,255,0.85)", textTransform: "uppercase", letterSpacing: ".1em", fontWeight: 600 }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
             <a href="#giving-back" onClick={(e) => { e.preventDefault(); document.getElementById("giving-back")?.scrollIntoView({ behavior: "smooth" }); }} className="btn btn-light" data-testid="how-it-works-btn">How It Works</a>
+            <a href="https://instagram.com/shopmollyandsophie" target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ borderColor: "rgba(255,255,255,0.7)", color: "#fff" }} data-testid="see-receipts-btn">See the Receipts on IG</a>
           </div>
         </div>
       </section>
@@ -359,6 +414,56 @@ export default function ThemePreview() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section style={{ padding: "5rem 0", background: "var(--color-bg)" }} data-testid="preview-faq">
+        <div className="container" style={{ maxWidth: 820 }}>
+          <SectionHead eyebrow="Curious Pups" title={<>Frequently <em>asked</em></>} sub="Quick answers from real humans (and one drooling dog)." />
+          <div style={{ display: "grid", gap: ".75rem" }}>
+            {[
+              { q: "How fast do orders ship?", a: "Most orders leave our hands within 1–3 business days. Once shipped, you'll get a tracking link to obsess over (we do too)." },
+              { q: "Do you offer free shipping?", a: "Yes! Spend $50 or more and shipping is on us within the U.S. Otherwise, flat-rate shipping is calculated at checkout." },
+              { q: "What's your return policy?", a: "30-day, no-questions-asked returns on unused items. If your pup didn't approve, send it back and we'll make it right." },
+              { q: "How does the 1% donation work?", a: "We automatically set aside 1% of every order's revenue. At the end of each month we hand-pick a small, trusted pet rescue and donate the full amount — then post the receipt on Instagram." },
+              { q: "Can I cancel or change my order?", a: "Reach out to support@mollyandsophie.com within 12 hours of placing your order and we'll do everything we can to update or cancel it before it ships." },
+              { q: "Do you ship internationally?", a: "Currently we only ship within the United States, but international shipping is on the roadmap. Sign up for our newsletter to be the first to know." },
+            ].map((f, i) => (
+              <FAQItem key={i} index={i} question={f.q} answer={f.a} />
+            ))}
+          </div>
+          <div style={{ textAlign: "center", marginTop: "2.5rem" }}>
+            <p style={{ color: "rgba(31,41,55,0.7)", marginBottom: ".75rem" }}>Still have a question?</p>
+            <a href="mailto:support@mollyandsophie.com" className="btn btn-outline" data-testid="faq-contact-btn">Email Support</a>
+          </div>
+        </div>
+      </section>
+
+      {/* INSTAGRAM / UGC STRIP */}
+      <section style={{ padding: "5rem 0", background: "var(--color-cream)" }} data-testid="preview-instagram">
+        <div className="container">
+          <SectionHead eyebrow="@shopmollyandsophie" title={<>From the <em>pack</em> to yours</>} sub="Tag #mollyandsophie for a chance to be featured." />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: ".75rem" }} data-testid="ugc-grid">
+            {[
+              { src: RESCUE_IMG.molly, caption: "Molly's first walk in her harness ✨" },
+              { src: RESCUE_IMG.sophie, caption: "Sophie won't share the bed" },
+              { src: RESCUE_IMG.jack, caption: "Jack post-treat stare-down" },
+              { src: RESCUE_IMG.molly, caption: "Adventure mode: activated" },
+              { src: RESCUE_IMG.sophie, caption: "Salmon = pure joy" },
+              { src: RESCUE_IMG.jack, caption: "Old soul, big naps" },
+            ].map((p, i) => (
+              <a key={i} href="https://instagram.com/shopmollyandsophie" target="_blank" rel="noopener noreferrer" style={{ position: "relative", aspectRatio: "1", borderRadius: 18, overflow: "hidden", display: "block", cursor: "pointer" }} className="ugc-tile" data-testid={`ugc-tile-${i}`}>
+                <img src={p.src} alt={p.caption} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform .4s ease" }} />
+                <div className="ugc-overlay" style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(31,41,55,0.85), rgba(31,41,55,0))", opacity: 0, transition: "opacity .25s ease", display: "flex", alignItems: "flex-end", padding: ".75rem", color: "#fff", fontSize: ".75rem", fontFamily: "var(--font-heading)", fontWeight: 600 }}>
+                  📸 {p.caption}
+                </div>
+              </a>
+            ))}
+          </div>
+          <div style={{ textAlign: "center", marginTop: "2rem" }}>
+            <a href="https://instagram.com/shopmollyandsophie" target="_blank" rel="noopener noreferrer" className="btn btn-secondary" data-testid="follow-instagram-btn">Follow on Instagram</a>
           </div>
         </div>
       </section>
@@ -533,6 +638,10 @@ export default function ThemePreview() {
           0% { background-position: -200% 0; }
           100% { background-position: 200% 0; }
         }
+        .ugc-tile { transition: transform .25s ease; }
+        .ugc-tile:hover { transform: translateY(-4px); }
+        .ugc-tile:hover img { transform: scale(1.06); }
+        .ugc-tile:hover .ugc-overlay { opacity: 1; }
       `}</style>
 
       {/* SEARCH MODAL */}
@@ -605,6 +714,23 @@ function FooterCol({ title, items }) {
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+function FAQItem({ question, answer, index }) {
+  const [open, setOpen] = useState(index === 0);
+  return (
+    <div style={{ background: "var(--color-cream)", borderRadius: 18, overflow: "hidden", border: "2px solid transparent", transition: "border-color .25s ease" }} data-testid={`faq-item-${index}`}>
+      <button onClick={() => setOpen(!open)} style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem", background: "transparent", border: "none", padding: "1.25rem 1.5rem", textAlign: "left", cursor: "pointer", fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: "1.05rem", color: "var(--color-text)" }} data-testid={`faq-toggle-${index}`} aria-expanded={open}>
+        <span>{question}</span>
+        <ChevronRight size={20} style={{ flexShrink: 0, transform: open ? "rotate(90deg)" : "rotate(0)", transition: "transform .25s ease", color: "var(--color-primary)" }} />
+      </button>
+      {open && (
+        <div style={{ padding: "0 1.5rem 1.25rem", color: "rgba(31,41,55,0.78)", fontSize: ".95rem", lineHeight: 1.65 }} data-testid={`faq-answer-${index}`}>
+          {answer}
+        </div>
+      )}
     </div>
   );
 }

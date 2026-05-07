@@ -10,6 +10,16 @@
         "badge_text": "1% to Pet Rescues 🐾"
       }
     },
+    "trust-strip": {
+      "type": "trust-strip",
+      "blocks": {
+        "t1": { "type": "trust", "settings": { "icon": "🚚", "title": "Free shipping $50+", "sub": "Ships from the USA" } },
+        "t2": { "type": "trust", "settings": { "icon": "↩️", "title": "30-day returns", "sub": "No questions asked" } },
+        "t3": { "type": "trust", "settings": { "icon": "💝", "title": "1% to rescues", "sub": "Every single order" } },
+        "t4": { "type": "trust", "settings": { "icon": "🔒", "title": "Secure checkout", "sub": "256-bit encryption" } }
+      },
+      "block_order": ["t1", "t2", "t3", "t4"]
+    },
     "categories": {
       "type": "featured-categories",
       "blocks": {
@@ -39,7 +49,25 @@
       },
       "block_order": ["jack","sophie","molly"]
     },
-    "donation": { "type": "donation-banner", "settings": {} },
+    "donation-impact": {
+      "type": "donation-impact",
+      "settings": {
+        "eyebrow": "Real Impact, Real Receipts",
+        "heading": "Together, the pack has given <em>back</em>",
+        "subheading": "Every order chips in. Here's the impact this community has made so far:",
+        "primary_text": "How It Works",
+        "primary_link": "/pages/giving-back",
+        "secondary_text": "See the Receipts on IG",
+        "secondary_link": "https://instagram.com/shopmollyandsophie"
+      },
+      "blocks": {
+        "s1": { "type": "stat", "settings": { "number": "$4,287", "label": "Donated to rescues" } },
+        "s2": { "type": "stat", "settings": { "number": "12", "label": "Rescues supported" } },
+        "s3": { "type": "stat", "settings": { "number": "8,341", "label": "Orders shipped" } },
+        "s4": { "type": "stat", "settings": { "number": "100%", "label": "Receipts posted" } }
+      },
+      "block_order": ["s1", "s2", "s3", "s4"]
+    },
     "testimonials": {
       "type": "testimonials",
       "blocks": {
@@ -48,7 +76,45 @@
         "r3": { "type": "review", "settings": { "text": "Knowing 1% goes to rescues makes every purchase feel meaningful. Plus, the harness fits my pup perfectly!", "author": "Priya K.", "pet": "Mom of Toby, Mini Schnauzer" } }
       },
       "block_order": ["r1","r2","r3"]
+    },
+    "faq": {
+      "type": "faq",
+      "settings": {
+        "eyebrow": "Curious Pups",
+        "heading": "Frequently <em>asked</em>",
+        "subheading": "Quick answers from real humans (and one drooling dog).",
+        "foot_text": "Still have a question?",
+        "foot_button": "Email Support",
+        "foot_link": "mailto:support@mollyandsophie.com"
+      },
+      "blocks": {
+        "q1": { "type": "qa", "settings": { "question": "How fast do orders ship?", "answer": "<p>Most orders leave our hands within 1–3 business days. Once shipped, you'll get a tracking link to obsess over (we do too).</p>" } },
+        "q2": { "type": "qa", "settings": { "question": "Do you offer free shipping?", "answer": "<p>Yes! Spend $50 or more and shipping is on us within the U.S. Otherwise, flat-rate shipping is calculated at checkout.</p>" } },
+        "q3": { "type": "qa", "settings": { "question": "What's your return policy?", "answer": "<p>30-day, no-questions-asked returns on unused items. If your pup didn't approve, send it back and we'll make it right.</p>" } },
+        "q4": { "type": "qa", "settings": { "question": "How does the 1% donation work?", "answer": "<p>We automatically set aside 1% of every order's revenue. At the end of each month we hand-pick a small, trusted pet rescue and donate the full amount — then post the receipt on Instagram.</p>" } },
+        "q5": { "type": "qa", "settings": { "question": "Can I cancel or change my order?", "answer": "<p>Reach out to support@mollyandsophie.com within 12 hours of placing your order and we'll do everything we can to update or cancel it before it ships.</p>" } },
+        "q6": { "type": "qa", "settings": { "question": "Do you ship internationally?", "answer": "<p>Currently we only ship within the United States, but international shipping is on the roadmap. Sign up for our newsletter to be the first to know.</p>" } }
+      },
+      "block_order": ["q1","q2","q3","q4","q5","q6"]
+    },
+    "instagram-feed": {
+      "type": "instagram-feed",
+      "settings": {
+        "handle": "@shopmollyandsophie",
+        "heading": "From the <em>pack</em> to yours",
+        "subheading": "Tag #mollyandsophie for a chance to be featured.",
+        "profile_url": "https://instagram.com/shopmollyandsophie"
+      },
+      "blocks": {
+        "p1": { "type": "post", "settings": { "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/yvrv5cn8_IMG_9662.jpg", "caption": "Molly's first walk in her harness ✨" } },
+        "p2": { "type": "post", "settings": { "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/g2hrd7bt_IMG_9494.jpg", "caption": "Sophie won't share the bed" } },
+        "p3": { "type": "post", "settings": { "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/q86lwpgi_IMG_1473.jpg", "caption": "Jack post-treat stare-down" } },
+        "p4": { "type": "post", "settings": { "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/yvrv5cn8_IMG_9662.jpg", "caption": "Adventure mode: activated" } },
+        "p5": { "type": "post", "settings": { "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/g2hrd7bt_IMG_9494.jpg", "caption": "Salmon = pure joy" } },
+        "p6": { "type": "post", "settings": { "fallback_url": "https://customer-assets.emergentagent.com/job_6d3e1c7b-f001-4e06-8ed8-3843020b086b/artifacts/q86lwpgi_IMG_1473.jpg", "caption": "Old soul, big naps" } }
+      },
+      "block_order": ["p1","p2","p3","p4","p5","p6"]
     }
   },
-  "order": ["hero","categories","featured","rescues","donation","testimonials"]
+  "order": ["hero","trust-strip","categories","featured","rescues","donation-impact","testimonials","faq","instagram-feed"]
 }

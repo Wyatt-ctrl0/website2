@@ -29,6 +29,25 @@ Build a Shopify drop-shipping theme (delivered as ZIP) for a pet store at mollya
   - `pages/LandingPage.jsx` — Marketing/download page with theme info, features, install steps
   - `pages/ThemePreview.jsx` — Live HTML simulation of the Shopify storefront
 
+## Tasks Done (May 7, 2026 — Conversion Pack Update)
+- ✅ Fixed "Show all" button breaking the products grid (IntersectionObserver re-observes new cards on filter change; stable slug keys)
+- ✅ Star ratings + review counts on every product card (homepage + PDP)
+- ✅ Trust strip under hero (Free shipping / 30-day returns / 1% to rescues / Secure checkout)
+- ✅ Donation Impact Counter section with 4 live stats ($4,287 donated, 12 rescues, 8,341 orders, 100% receipts) + CTA to IG receipts
+- ✅ FAQ accordion section (6 prefilled Q&A) + email-support fallback
+- ✅ Instagram UGC strip (6 tiles, hover overlay, link to profile)
+- ✅ Stock urgency banner on PDP ("Only X left — selling fast") for stock ≤ 10
+- ✅ "Frequently Bought Together" pack bundle on PDP with 5% bundle discount + savings badge
+- ✅ Reviews section on PDP with 5-star average, distribution bars, 3 verified review cards
+- ✅ Sticky mobile add-to-cart bar on PDP (visible on viewports < 768px)
+- ✅ Custom 404 page with paw-print mascot and routes back to home / shop
+- ✅ Mirrored all four homepage upgrades into the Shopify theme as proper sections with `{% schema %}` (theme customizer-editable):
+  - `sections/trust-strip.liquid`
+  - `sections/donation-impact.liquid`
+  - `sections/faq.liquid`
+  - `sections/instagram-feed.liquid`
+- ✅ Updated `templates/index.json` order: Hero → Trust Strip → Categories → Featured → Rescues → Donation Impact → Testimonials → FAQ → Instagram
+
 ## Tasks Done (May 7, 2026)
 - ✅ Built complete Shopify theme structure (Liquid + JSON + CSS + JS, 43 files)
 - ✅ Brand colors derived from logo: coral `#E8765A`, teal `#5FB4B8`, navy `#1F2937`, cream `#F5EBD8`, mint `#B5D6CD`
