@@ -78,7 +78,8 @@
         promoEnabled: {{ settings.promo_popup_enabled | default: true }},
         promoCode: {{ settings.promo_popup_code | default: 'WELCOME10' | json }},
         promoTitle: {{ settings.promo_popup_title | default: 'Welcome to the Pack' | json }},
-        promoSubtitle: {{ settings.promo_popup_subtitle | default: '10% off your first order over $50' | json }}
+        promoSubtitle: {{ settings.promo_popup_subtitle | default: '10% off your first order over $50' | json }},
+        bundleUpsellEnabled: {{ settings.bundle_upsell_enabled | default: true }}
       };
     </script>
   </head>
@@ -96,6 +97,7 @@
 
     {% render 'cart-drawer' %}
     {% render 'promo-popup' %}
+    {% render 'bundle-upsell-popup' %}
 
     <ul hidden>
       <li id="a11y-refresh-page-message">{{ 'accessibility.refresh_page' | t }}</li>
