@@ -38,6 +38,7 @@ export default function ThemePreview() {
   const [promoApplied, setPromoApplied] = useState(null);
   const [promoMsg, setPromoMsg] = useState("");
   const [codeCopied, setCodeCopied] = useState(false);
+  const [newsletterMsg, setNewsletterMsg] = useState("");
 
   const addToCart = (p) => {
     setCart((prev) => {
@@ -75,9 +76,32 @@ export default function ThemePreview() {
   };
 
   const copyCode = () => {
-    navigator.clipboard?.writeText("WELCOME10");
+    try {
+      const p = navigator.clipboard?.writeText("WELCOME10");
+      if (p && typeof p.catch === "function") p.catch(() => {});
+    } catch (_) {
+      // iframe / sandboxed: silently ignore
+    }
     setCodeCopied(true);
     setTimeout(() => setCodeCopied(false), 2000);
+  };
+
+  const submitNewsletter = async (e) => {
+    e.preventDefault();
+    const email = e.target.elements.newsletter_email.value;
+    if (!email) return;
+    try {
+      await fetch(`${API}/newsletter`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      e.target.reset();
+      setNewsletterMsg("✓ You're on the list! Welcome to the pack.");
+    } catch (_) {
+      setNewsletterMsg("Something went wrong. Try again.");
+    }
+    setTimeout(() => setNewsletterMsg(""), 4000);
   };
 
   const handleDownload = () => {
@@ -274,10 +298,11 @@ export default function ThemePreview() {
           <div style={{ display: "inline-block", fontFamily: "var(--font-heading)", fontSize: ".85rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".15em", color: "var(--color-secondary)", marginBottom: "1rem" }}>Keep In Touch</div>
           <h2 style={{ fontSize: "clamp(1.75rem, 3vw, 2.5rem)" }}>Treats, news & <em>tail wags</em></h2>
           <p>Sign up for first-dibs on new arrivals, exclusive promos, and rescue stories from the pack.</p>
-          <form style={{ display: "flex", gap: ".75rem", marginTop: "1.5rem", flexWrap: "wrap" }} onSubmit={(e) => e.preventDefault()}>
-            <input type="email" placeholder="your@email.com" style={{ flex: "1 1 200px", padding: "1rem 1.5rem", borderRadius: 999, border: "2px solid transparent", background: "var(--color-bg)", fontSize: "1rem", outline: "none" }} />
-            <button type="submit" className="btn btn-primary">Subscribe</button>
+          <form style={{ display: "flex", gap: ".75rem", marginTop: "1.5rem", flexWrap: "wrap" }} onSubmit={submitNewsletter}>
+            <input name="newsletter_email" type="email" placeholder="your@email.com" required style={{ flex: "1 1 200px", padding: "1rem 1.5rem", borderRadius: 999, border: "2px solid transparent", background: "var(--color-bg)", fontSize: "1rem", outline: "none" }} data-testid="newsletter-input" />
+            <button type="submit" className="btn btn-primary" data-testid="newsletter-submit">Subscribe</button>
           </form>
+          {newsletterMsg && <div style={{ marginTop: ".75rem", fontSize: ".9rem", color: "var(--color-secondary)", fontWeight: 700 }} data-testid="newsletter-message">{newsletterMsg}</div>}
           <p style={{ fontSize: ".8rem", color: "rgba(31,41,55,0.6)", marginTop: "1rem", lineHeight: 1.5 }}>By signing up, you consent to receive updates, special offers, program communications and other information via email from us.</p>
         </div>
       </section>
@@ -291,9 +316,13 @@ export default function ThemePreview() {
                 <span style={{ color: "var(--color-primary)" }}>Molly</span> <span style={{ color: "var(--color-secondary)" }}>& Sophie</span>
               </div>
               <p style={{ color: "rgba(255,255,255,0.7)", maxWidth: 360, marginBottom: "1.5rem" }}>A small, family-run pet shop inspired by our three rescues — Jack, Sophie & Molly.</p>
-              <div style={{ display: "flex", gap: ".75rem" }}>
-                {["IG", "FB", "TT"].map((s) => (
-                  <span key={s} style={{ width: 42, height: 42, borderRadius: "50%", border: "2px solid rgba(255,255,255,0.2)", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: ".75rem", fontWeight: 700 }}>{s}</span>
+              <div style={{ display: "flex", gap: ".75rem" }} data-testid="footer-socials">
+                {[
+                  { label: "Instagram", href: "https://instagram.com/shopmollyandsophie", testid: "social-instagram", icon: "IG" },
+                  { label: "Facebook", href: "https://facebook.com/mollyandsophie", testid: "social-facebook", icon: "FB" },
+                  { label: "TikTok", href: "https://tiktok.com/@mollyandsophie.com", testid: "social-tiktok", icon: "TT" },
+                ].map((s) => (
+                  <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label} data-testid={s.testid} style={{ width: 42, height: 42, borderRadius: "50%", border: "2px solid rgba(255,255,255,0.2)", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: ".75rem", fontWeight: 700, color: "var(--color-cream)", transition: "all .2s ease" }}>{s.icon}</a>
                 ))}
               </div>
             </div>
