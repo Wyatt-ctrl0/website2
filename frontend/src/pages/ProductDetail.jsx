@@ -33,6 +33,16 @@ export default function ProductDetail() {
   const [openAccordion, setOpenAccordion] = useState("love");
   const [adding, setAdding] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [activeImage, setActiveImage] = useState(0);
+  // 4 view variants — same emoji shown at different scales/rotations so
+  // swapping thumbnails is visually obvious in this preview (real Shopify
+  // products render distinct image URLs here).
+  const imageVariants = [
+    { transform: "none" },
+    { transform: "scale(1.1) rotate(-7deg)" },
+    { transform: "scale(0.92) rotate(9deg) translateX(8px)" },
+    { transform: "scale(1.04) rotate(-3deg) translateY(-6px)" },
+  ];
   const [pdpToast, setPdpToast] = useState(null);
   const wishlist = useWishlist();
   const liked = wishlist.has(product.slug);
@@ -107,17 +117,33 @@ export default function ProductDetail() {
             {/* Gallery */}
             <div className="reveal">
               <div onClick={() => setLightboxOpen(true)} style={{ aspectRatio: "1", background: product.bg, borderRadius: 24, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "10rem", position: "relative", overflow: "hidden", cursor: "zoom-in" }} data-testid="product-main-image" className="product-main-image">
-                {product.emoji}
+                <span style={{ display: "inline-block", transform: imageVariants[activeImage].transform, transition: "transform .35s cubic-bezier(.2,.8,.2,1)", lineHeight: 1 }} data-testid="product-main-emoji">
+                  {product.emoji}
+                </span>
                 {product.badge && <span style={{ position: "absolute", top: "1.25rem", left: "1.25rem", background: "var(--color-primary)", color: "#fff", padding: ".5rem 1rem", borderRadius: 999, fontFamily: "var(--font-heading)", fontWeight: 800, fontSize: ".85rem" }}>{product.badge}</span>}
                 {product.compareAt && <span style={{ position: "absolute", top: "1.25rem", right: "1.25rem", background: "var(--color-secondary)", color: "#fff", padding: ".5rem 1rem", borderRadius: 999, fontFamily: "var(--font-heading)", fontWeight: 800, fontSize: ".85rem" }}>SALE</span>}
                 <div className="zoom-hint" style={{ position: "absolute", bottom: "1rem", right: "1rem", background: "rgba(255,255,255,0.95)", borderRadius: 999, padding: ".5rem .85rem", display: "inline-flex", alignItems: "center", gap: ".4rem", fontSize: ".8rem", fontFamily: "var(--font-heading)", fontWeight: 700 }}>
                   <ZoomIn size={14} /> Click to enlarge
                 </div>
               </div>
-              <div style={{ display: "flex", gap: ".75rem", marginTop: "1rem", flexWrap: "wrap" }}>
-                {[1, 2, 3, 4].map((i) => (
-                  <button key={i} onClick={() => setLightboxOpen(true)} style={{ width: 80, height: 80, borderRadius: 12, background: product.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem", border: i === 1 ? "2px solid var(--color-primary)" : "2px solid transparent", cursor: "pointer", transition: "transform .2s ease, border-color .2s ease" }} className="thumb-btn" data-testid={`product-thumb-${i}`}>{product.emoji}</button>
-                ))}
+              <div style={{ display: "flex", gap: ".75rem", marginTop: "1rem", flexWrap: "wrap" }} role="tablist" aria-label="Product images">
+                {imageVariants.map((variant, idx) => {
+                  const active = activeImage === idx;
+                  return (
+                    <button
+                      key={idx}
+                      onClick={(e) => { e.stopPropagation(); setActiveImage(idx); }}
+                      style={{ width: 80, height: 80, borderRadius: 12, background: product.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem", border: active ? "2px solid var(--color-primary)" : "2px solid transparent", cursor: "pointer", transition: "transform .2s ease, border-color .2s ease", padding: 0, overflow: "hidden" }}
+                      className="thumb-btn"
+                      role="tab"
+                      aria-selected={active}
+                      aria-label={`View ${idx + 1}`}
+                      data-testid={`product-thumb-${idx}`}
+                    >
+                      <span style={{ display: "inline-block", transform: variant.transform, lineHeight: 1 }}>{product.emoji}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -242,30 +268,9 @@ export default function ProductDetail() {
                 </div>
               </div>
 
-              {/* Accordions */}
-              <div style={{ marginTop: "2rem" }}>
-                <Accordion id="love" title="What pet parents love" open={openAccordion === "love"} onClick={() => setOpenAccordion(openAccordion === "love" ? "" : "love")}>
-                  <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                    {[
-                      "Curated by real pet parents (us!)",
-                      "Tested and approved by Jack, Sophie & Molly",
-                      "1% donated monthly to a hand-picked rescue",
-                      "Easy 30-day returns — no questions asked",
-                      "Ships in 1–3 business days from the USA",
-                    ].map((it) => (
-                      <li key={it} style={{ padding: ".5rem 0", display: "flex", alignItems: "center", gap: ".75rem" }}>
-                        <span style={{ color: "var(--color-secondary)", fontWeight: 800, fontSize: "1.25rem" }}>✓</span> {it}
-                      </li>
-                    ))}
-                  </ul>
-                </Accordion>
-                <Accordion id="ship" title="Shipping & returns" open={openAccordion === "ship"} onClick={() => setOpenAccordion(openAccordion === "ship" ? "" : "ship")}>
-                  <p style={{ margin: 0 }}>Free shipping on orders over $50. We ship within 1–3 business days from the USA. Not loving it? Return within 30 days for a full refund.</p>
-                </Accordion>
-                <Accordion id="give" title="How your purchase helps" open={openAccordion === "give"} onClick={() => setOpenAccordion(openAccordion === "give" ? "" : "give")}>
-                  <p style={{ margin: 0 }}>1% of every order is donated each month to a trusted pet rescue we hand-pick ourselves. We're not affiliated with any single charity — we like to spread the love around.</p>
-                </Accordion>
-              </div>
+              {/* (Frequently-asked accordions used to live here. They were
+                  promoted to a dedicated section below the bundle so the
+                  bundle upsell hits the eye immediately after the buy box.) */}
             </div>
           </div>
         </div>
@@ -309,6 +314,40 @@ export default function ProductDetail() {
               </div>
             );
           })()}
+        </div>
+      </section>
+
+      {/* FREQUENTLY ASKED — promoted from the in-product accordion column
+          so the bundle upsell sits directly under the buy box. */}
+      <section id="faq" style={{ padding: "4rem 0", background: "var(--color-cream)" }} className="reveal" data-testid="faq-section">
+        <div className="container" style={{ maxWidth: 820 }}>
+          <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+            <div style={{ display: "inline-block", fontFamily: "var(--font-heading)", fontSize: ".85rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".15em", color: "var(--color-secondary)", marginBottom: ".75rem" }}>Curious Pups</div>
+            <h2 style={{ fontSize: "clamp(1.5rem, 3vw, 2.25rem)", margin: 0 }}>Frequently <em>asked</em></h2>
+          </div>
+          <div>
+            <Accordion id="love" title="What pet parents love" open={openAccordion === "love"} onClick={() => setOpenAccordion(openAccordion === "love" ? "" : "love")}>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                {[
+                  "Curated by real pet parents (us!)",
+                  "Tested and approved by Jack, Sophie & Molly",
+                  "1% donated monthly to a hand-picked rescue",
+                  "Easy 30-day returns — no questions asked",
+                  "Ships in 1–3 business days from the USA",
+                ].map((it) => (
+                  <li key={it} style={{ padding: ".5rem 0", display: "flex", alignItems: "center", gap: ".75rem" }}>
+                    <span style={{ color: "var(--color-secondary)", fontWeight: 800, fontSize: "1.25rem" }}>✓</span> {it}
+                  </li>
+                ))}
+              </ul>
+            </Accordion>
+            <Accordion id="ship" title="Shipping & returns" open={openAccordion === "ship"} onClick={() => setOpenAccordion(openAccordion === "ship" ? "" : "ship")}>
+              <p style={{ margin: 0 }}>Free shipping on orders over $50. We ship within 1–3 business days from the USA. Not loving it? Return within 30 days for a full refund.</p>
+            </Accordion>
+            <Accordion id="give" title="How your purchase helps" open={openAccordion === "give"} onClick={() => setOpenAccordion(openAccordion === "give" ? "" : "give")}>
+              <p style={{ margin: 0 }}>1% of every order is donated each month to a trusted pet rescue we hand-pick ourselves. We're not affiliated with any single charity — we like to spread the love around.</p>
+            </Accordion>
+          </div>
         </div>
       </section>
 
