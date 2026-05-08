@@ -34,22 +34,31 @@ export function useWishlist() {
 
   const has = useCallback((slug) => slugs.includes(slug), [slugs]);
 
+  // Functional updaters so multiple toggle/remove calls in the same tick
+  // (e.g. "Move all to cart" iterating) all observe the latest state.
   const toggle = useCallback((slug) => {
-    const next = slugs.includes(slug) ? slugs.filter((s) => s !== slug) : [...slugs, slug];
-    write(next);
-    setSlugs(next);
-    return !slugs.includes(slug); // returns true if it was added
-  }, [slugs]);
+    let wasAdded = false;
+    setSlugs((prev) => {
+      const isIn = prev.includes(slug);
+      wasAdded = !isIn;
+      const next = isIn ? prev.filter((s) => s !== slug) : [...prev, slug];
+      write(next);
+      return next;
+    });
+    return wasAdded;
+  }, []);
 
   const remove = useCallback((slug) => {
-    const next = slugs.filter((s) => s !== slug);
-    write(next);
-    setSlugs(next);
-  }, [slugs]);
+    setSlugs((prev) => {
+      const next = prev.filter((s) => s !== slug);
+      write(next);
+      return next;
+    });
+  }, []);
 
   const clear = useCallback(() => {
-    write([]);
     setSlugs([]);
+    write([]);
   }, []);
 
   return { slugs, count: slugs.length, has, toggle, remove, clear };

@@ -75,8 +75,19 @@ export default function ThemePreview() {
   const [newsletterMsg, setNewsletterMsg] = useState("");
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [wishlistOpen, setWishlistOpen] = useState(false);
+  const [checkoutBundleOpen, setCheckoutBundleOpen] = useState(false);
   const [toast, setToast] = useState(null); // { msg, tone }
   const wishlist = useWishlist();
+
+  // Two starter products used by the "bundle up & save" checkout popup.
+  // Picked deterministically so the popup looks consistent and matches the mockup.
+  const bundleUpsellSlugs = ["salmon-soft-treats", "squeaky-plush-carrot"];
+  const bundleUpsellItems = bundleUpsellSlugs
+    .map((s) => PRODUCTS.find((p) => p.slug === s))
+    .filter(Boolean);
+  const bundleUpsellSubtotal = bundleUpsellItems.reduce((s, p) => s + p.price, 0);
+  const bundleUpsellSavings = +(bundleUpsellSubtotal * 0.2).toFixed(2); // 20% bundle discount
+  const bundleUpsellTotal = +(bundleUpsellSubtotal - bundleUpsellSavings).toFixed(2);
 
   const showToast = (msg, tone = "default") => {
     setToast({ msg, tone, id: Date.now() });
@@ -179,9 +190,9 @@ export default function ThemePreview() {
   };
 
   useEffect(() => {
-    document.body.style.overflow = popupOpen || cartOpen || searchOpen || accountOpen || lightboxOpen || wishlistOpen ? "hidden" : "";
+    document.body.style.overflow = popupOpen || cartOpen || searchOpen || accountOpen || lightboxOpen || wishlistOpen || checkoutBundleOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
-  }, [popupOpen, cartOpen, searchOpen, accountOpen, lightboxOpen, wishlistOpen]);
+  }, [popupOpen, cartOpen, searchOpen, accountOpen, lightboxOpen, wishlistOpen, checkoutBundleOpen]);
 
   // Scroll-reveal animations — re-runs when the visible product set changes
   // so newly inserted cards are observed (and not stuck at opacity:0).
@@ -643,7 +654,22 @@ export default function ThemePreview() {
               <div style={{ fontFamily: "var(--font-heading)", fontWeight: 700 }}>Subtotal</div>
               <div style={{ fontFamily: "var(--font-heading)", fontWeight: 800, fontSize: "1.5rem", color: "var(--color-primary)" }} data-testid="cart-subtotal">${subtotal.toFixed(2)}</div>
             </div>
-            <button className="btn btn-primary btn-block" data-testid="cart-checkout">Checkout →</button>
+            <button
+              className="btn btn-primary btn-block"
+              data-testid="cart-checkout"
+              onClick={() => {
+                // If the user already has the upsell bundle in their cart, skip
+                // straight to the (preview) checkout. Otherwise show the popup.
+                const cartNames = new Set(cart.map((x) => x.name));
+                const alreadyHasBundle = bundleUpsellItems.every((p) => cartNames.has(p.name));
+                if (alreadyHasBundle) {
+                  setCartOpen(false);
+                  showToast("Proceeding to checkout (preview)", "love");
+                } else {
+                  setCheckoutBundleOpen(true);
+                }
+              }}
+            >Checkout →</button>
             <p style={{ textAlign: "center", fontSize: ".8rem", color: "rgba(31,41,55,0.55)", margin: ".75rem 0 0" }}>Taxes & shipping calculated at checkout</p>
           </div>
         )}
@@ -799,7 +825,7 @@ export default function ThemePreview() {
                           <div onClick={() => { setWishlistOpen(false); window.scrollTo(0, 0); navigate(`/preview/product/${p.slug}`); }} style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: ".95rem", marginBottom: ".15rem", cursor: "pointer", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.name}</div>
                           <div style={{ fontSize: ".85rem", color: "var(--color-primary)", fontWeight: 800, fontFamily: "var(--font-heading)" }}>${p.price.toFixed(2)}</div>
                           <div style={{ display: "flex", gap: ".5rem", marginTop: ".4rem" }}>
-                            <button onClick={() => { addToCart(p); }} style={{ background: "var(--color-secondary)", color: "#fff", border: "none", borderRadius: 999, padding: ".3rem .75rem", fontSize: ".75rem", fontWeight: 700, cursor: "pointer", fontFamily: "var(--font-heading)" }} data-testid={`wishlist-add-${slug}`}>+ Cart</button>
+                            <button onClick={() => { addToCart(p); wishlist.remove(slug); showToast(`Added ${p.name} to cart`, "love"); }} style={{ background: "var(--color-secondary)", color: "#fff", border: "none", borderRadius: 999, padding: ".3rem .75rem", fontSize: ".75rem", fontWeight: 700, cursor: "pointer", fontFamily: "var(--font-heading)" }} data-testid={`wishlist-add-${slug}`}>+ Cart</button>
                             <button onClick={() => { wishlist.remove(slug); showToast(`Removed from wishlist`, "muted"); }} style={{ background: "transparent", color: "rgba(31,41,55,0.6)", border: "1.5px solid rgba(31,41,55,0.15)", borderRadius: 999, padding: ".3rem .75rem", fontSize: ".75rem", fontWeight: 700, cursor: "pointer", fontFamily: "var(--font-heading)" }} data-testid={`wishlist-remove-${slug}`}>Remove</button>
                           </div>
                         </div>
@@ -811,10 +837,101 @@ export default function ThemePreview() {
             </div>
             {wishlist.count > 0 && (
               <div style={{ padding: "1rem 1.5rem", borderTop: "2px solid rgba(31,41,55,0.08)", display: "flex", gap: ".75rem" }}>
-                <button onClick={() => { wishlist.slugs.forEach((s) => { const p = PRODUCTS.find((x) => x.slug === s); if (p) addToCart(p); }); setWishlistOpen(false); }} className="btn btn-primary" style={{ flex: 1 }} data-testid="wishlist-move-all">Move all to cart</button>
+                <button onClick={() => { const moved = wishlist.slugs.length; wishlist.slugs.forEach((s) => { const p = PRODUCTS.find((x) => x.slug === s); if (p) addToCart(p); }); wishlist.clear(); setWishlistOpen(false); showToast(`Moved ${moved} item${moved === 1 ? "" : "s"} to cart`, "love"); }} className="btn btn-primary" style={{ flex: 1 }} data-testid="wishlist-move-all">Move all to cart</button>
                 <button onClick={() => { wishlist.clear(); showToast("Wishlist cleared", "muted"); }} className="btn btn-outline" data-testid="wishlist-clear">Clear</button>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* CHECKOUT BUNDLE-UPSELL POPUP */}
+      {checkoutBundleOpen && (
+        <div
+          onClick={() => setCheckoutBundleOpen(false)}
+          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 350, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}
+          data-testid="checkout-bundle-popup"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{ background: "var(--color-bg)", borderRadius: 28, maxWidth: 520, width: "100%", padding: "2rem 1.75rem", position: "relative", maxHeight: "92vh", overflowY: "auto", boxShadow: "0 30px 80px -20px rgba(0,0,0,0.4)" }}
+          >
+            <button
+              onClick={() => setCheckoutBundleOpen(false)}
+              style={{ position: "absolute", top: ".75rem", right: ".75rem", width: 38, height: 38, borderRadius: "50%", background: "rgba(31,41,55,0.06)", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+              data-testid="checkout-bundle-close"
+              aria-label="Close"
+            >
+              <X size={18} />
+            </button>
+
+            <div style={{ textAlign: "center", marginBottom: "1.25rem" }}>
+              <div style={{ fontFamily: "var(--font-heading)", fontSize: ".8rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".18em", color: "var(--color-secondary)", marginBottom: ".75rem" }}>
+                Wait — one more thing
+              </div>
+              <h2 style={{ fontSize: "clamp(1.4rem, 3vw, 1.75rem)", margin: "0 0 .5rem" }}>
+                Bundle up &amp; <em>save</em> before you check out
+              </h2>
+              <p style={{ color: "rgba(31,41,55,0.65)", fontSize: ".95rem", margin: 0 }}>
+                Add these pup-favorites to your order at a discount — your pack will thank you.
+              </p>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: `repeat(${bundleUpsellItems.length}, 1fr)`, gap: ".5rem", alignItems: "center", marginBottom: "1.25rem" }}>
+              {bundleUpsellItems.map((p, i) => (
+                <React.Fragment key={p.slug}>
+                  <div style={{ background: p.bg, borderRadius: 18, padding: "1rem .75rem", textAlign: "center" }} data-testid={`checkout-bundle-item-${i}`}>
+                    <div style={{ fontSize: "2.5rem", lineHeight: 1 }}>{p.emoji}</div>
+                    <div style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: ".85rem", marginTop: ".5rem" }}>{p.name}</div>
+                    <div style={{ fontSize: ".8rem", color: "rgba(31,41,55,0.65)", marginTop: ".15rem" }}>${p.price.toFixed(2)}</div>
+                  </div>
+                  {i < bundleUpsellItems.length - 1 && (
+                    <span style={{ position: "absolute", display: "none" }} aria-hidden>+</span>
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+
+            <div style={{ background: "var(--color-cream)", borderRadius: 18, padding: "1rem 1.25rem", marginBottom: "1.25rem" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: ".9rem", marginBottom: ".4rem" }}>
+                <span style={{ fontWeight: 600 }}>Add-on total</span>
+                <span style={{ textDecoration: "line-through", color: "rgba(31,41,55,0.5)" }}>${bundleUpsellSubtotal.toFixed(2)}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: ".9rem", color: "var(--color-secondary)", fontWeight: 700 }}>
+                <span>Bundle savings</span>
+                <span>− ${bundleUpsellSavings.toFixed(2)}</span>
+              </div>
+              <div style={{ borderTop: "1.5px dashed rgba(31,41,55,0.15)", margin: ".75rem 0" }} />
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "var(--font-heading)", fontWeight: 800 }}>
+                <span style={{ color: "var(--color-primary)" }}>Add to your order</span>
+                <span style={{ fontSize: "1.4rem", color: "var(--color-primary)" }} data-testid="checkout-bundle-total">${bundleUpsellTotal.toFixed(2)}</span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                bundleUpsellItems.forEach((p) => addToCart(p));
+                setCheckoutBundleOpen(false);
+                setCartOpen(false);
+                showToast("Bundle added — proceeding to checkout (preview)", "love");
+              }}
+              className="btn btn-primary btn-block"
+              data-testid="checkout-bundle-accept"
+              style={{ marginBottom: ".5rem" }}
+            >
+              ✨ Yes, add the bundle &amp; check out
+            </button>
+            <button
+              onClick={() => {
+                setCheckoutBundleOpen(false);
+                setCartOpen(false);
+                showToast("Proceeding to checkout (preview)", "muted");
+              }}
+              data-testid="checkout-bundle-decline"
+              style={{ display: "block", margin: "0 auto", background: "none", border: "none", color: "rgba(31,41,55,0.6)", textDecoration: "underline", fontSize: ".85rem", cursor: "pointer", padding: ".5rem" }}
+            >
+              No thanks, just take me to checkout
+            </button>
           </div>
         </div>
       )}
@@ -831,6 +948,8 @@ export default function ThemePreview() {
 }
 
 const iconBtnStyle = { width: 44, height: 44, display: "inline-flex", alignItems: "center", justifyContent: "center", borderRadius: "50%", background: "transparent", border: "none", cursor: "pointer", position: "relative", color: "var(--color-text)" };
+
+const qtyBtnStyle = { width: 30, height: 30, display: "inline-flex", alignItems: "center", justifyContent: "center", background: "transparent", border: "none", cursor: "pointer", color: "var(--color-text)", fontSize: "1rem", fontWeight: 700, borderRadius: 999 };
 
 function SectionHead({ eyebrow, title, sub }) {
   return (
