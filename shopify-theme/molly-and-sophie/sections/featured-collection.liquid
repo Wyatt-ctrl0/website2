@@ -14,20 +14,38 @@
           {% render 'product-card', product: product %}
         {%- endfor -%}
       {%- else -%}
-        {% comment %} Placeholder products for demo {% endcomment %}
+        {% comment %}
+          Placeholder products for demo (when no Shopify products exist yet
+          or no collection is connected). The first and last products are
+          shown on sale so the merchant can see what compare-at pricing
+          looks like in this theme — set compare_at_price on real Shopify
+          products to display the same struck-through price + Save pill.
+        {% endcomment %}
         {%- assign placeholders = 'Salmon Soft Treats|Cozy Donut Bed|Squeaky Plush Carrot|Adventure Harness|Calming Chew Sticks|Catnip Mouse Trio|Premium Kibble Bowl|Plaid Travel Coat' | split: '|' -%}
-        {%- assign prices = '14|49|18|34|22|12|26|44' | split: '|' -%}
-        {%- assign emojis = '🦴|🛏️|🎾|🦮|🌿|🐱|🥣|🧥' | split: '|' -%}
+        {%- assign prices       = '14|49|18|34|22|12|26|44' | split: '|' -%}
+        {%- assign compares     = '19|0|0|0|0|0|0|59'        | split: '|' -%}
+        {%- assign emojis       = '🦴|🛏️|🎾|🦮|🌿|🐱|🥣|🧥' | split: '|' -%}
         {%- for ph in placeholders limit: section.settings.limit -%}
+          {%- assign compare = compares[forloop.index0] | times: 1 -%}
+          {%- assign price   = prices[forloop.index0]   | times: 1 -%}
           <div class="product-card" data-testid="product-card-demo-{{ forloop.index }}">
-            <div class="media" style="background: {%- cycle '#ffe4d4', '#d2efef', '#fce8da', '#e8f0d4' -%}; display:flex; align-items:center; justify-content:center; font-size:5rem;">
+            <div class="media" style="background: {%- cycle '#ffe4d4', '#d2efef', '#fce8da', '#e8f0d4' -%}; display:flex; align-items:center; justify-content:center; font-size:5rem; position: relative;">
               {{ emojis[forloop.index0] }}
               {%- if forloop.index0 == 0 -%}<span class="badge">Bestseller</span>{%- endif -%}
+              {%- if compare > price -%}<span class="badge" style="background: var(--color-secondary); right: .75rem; left: auto;">SALE</span>{%- endif -%}
             </div>
             <div class="info">
               <div class="vendor">Molly &amp; Sophie</div>
               <a href="/products/sample" class="title">{{ ph }}</a>
-              <div class="price">${{ prices[forloop.index0] }}.99</div>
+              <div class="price">
+                {%- if compare > price -%}
+                  <span class="compare" style="color: rgba(31,41,55,0.55); text-decoration: line-through; margin-right: .4rem; font-weight: 500;">${{ compare }}.99</span>
+                {%- endif -%}
+                <span style="color: {% if compare > price %}var(--color-primary){% else %}inherit{% endif %};">${{ price }}.99</span>
+                {%- if compare > price -%}
+                  <span class="save-pill" style="display: inline-block; margin-left: .5rem; background: rgba(95,180,184,0.15); color: var(--color-secondary); padding: .15rem .55rem; border-radius: 999px; font-size: .75rem; font-weight: 700;">Save ${{ compare | minus: price }}</span>
+                {%- endif -%}
+              </div>
             </div>
           </div>
         {%- endfor -%}
