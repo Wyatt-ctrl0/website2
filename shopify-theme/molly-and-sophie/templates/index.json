@@ -49,25 +49,6 @@
       },
       "block_order": ["jack","sophie","molly"]
     },
-    "donation-impact": {
-      "type": "donation-impact",
-      "settings": {
-        "eyebrow": "Real Impact, Real Receipts",
-        "heading": "Together, the pack has given <em>back</em>",
-        "subheading": "Every order chips in. Here's the impact this community has made so far:",
-        "primary_text": "How It Works",
-        "primary_link": "/pages/giving-back",
-        "secondary_text": "See the Receipts on IG",
-        "secondary_link": "https://instagram.com/shopmollyandsophie"
-      },
-      "blocks": {
-        "s1": { "type": "stat", "settings": { "number": "$4,287", "label": "Donated to rescues" } },
-        "s2": { "type": "stat", "settings": { "number": "12", "label": "Rescues supported" } },
-        "s3": { "type": "stat", "settings": { "number": "8,341", "label": "Orders shipped" } },
-        "s4": { "type": "stat", "settings": { "number": "100%", "label": "Receipts posted" } }
-      },
-      "block_order": ["s1", "s2", "s3", "s4"]
-    },
     "testimonials": {
       "type": "testimonials",
       "blocks": {
@@ -116,5 +97,5 @@
       "block_order": ["p1","p2","p3","p4","p5","p6"]
     }
   },
-  "order": ["hero","trust-strip","categories","featured","rescues","donation-impact","testimonials","faq","instagram-feed"]
+  "order": ["hero","trust-strip","categories","featured","rescues","testimonials","faq","instagram-feed"]
 }

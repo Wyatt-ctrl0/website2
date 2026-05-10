@@ -18,7 +18,12 @@
     </div>
     <div class="faq-foot">
       <p>{{ section.settings.foot_text | default: 'Still have a question?' }}</p>
-      <a href="{{ section.settings.foot_link | default: 'mailto:support@mollyandsophie.com' }}" class="btn btn-outline" data-testid="faq-contact-btn">{{ section.settings.foot_button | default: 'Email Support' }}</a>
+      <a
+        href="{{ section.settings.foot_link | default: 'mailto:support@mollyandsophie.com' }}"
+        class="btn btn-outline"
+        data-testid="faq-contact-btn"
+        data-app-mailto="support@mollyandsophie.com"
+      >{{ section.settings.foot_button | default: 'Email Support' }}</a>
     </div>
   </div>
 </section>
