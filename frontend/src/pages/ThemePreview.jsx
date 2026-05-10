@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Download, ShoppingBag, Search, User, Menu, X, ArrowLeft, Heart, Star, ChevronRight } from "lucide-react";
 import { useWishlist } from "../hooks/useWishlist";
+import { useCart } from "../hooks/useCart";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -67,7 +68,9 @@ export default function ThemePreview() {
   const [accountOpen, setAccountOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState("all");
   const [popupOpen, setPopupOpen] = useState(true);
-  const [cart, setCart] = useState([]);
+  const cartHook = useCart();
+  const cart = cartHook.items;
+  const updateQty = cartHook.updateQty;
   const [promoInput, setPromoInput] = useState("");
   const [promoApplied, setPromoApplied] = useState(null);
   const [promoMsg, setPromoMsg] = useState("");
@@ -100,17 +103,10 @@ export default function ThemePreview() {
   };
 
   const addToCart = (p) => {
-    setCart((prev) => {
-      const found = prev.find((x) => x.name === p.name);
-      if (found) return prev.map((x) => x.name === p.name ? { ...x, qty: x.qty + 1 } : x);
-      return [...prev, { ...p, qty: 1 }];
-    });
-    setCartOpen(true);
+    cartHook.add(p, 1);
+    showToast(`Added ${p.name} to cart 🛒`, "love");
   };
-  const updateQty = (name, delta) => {
-    setCart((prev) => prev.flatMap((x) => x.name === name ? (x.qty + delta <= 0 ? [] : [{ ...x, qty: x.qty + delta }]) : [x]));
-  };
-  const subtotal = cart.reduce((s, x) => s + x.price * x.qty, 0);
+  const subtotal = cartHook.subtotal;
   const threshold = 50;
   const remaining = Math.max(0, threshold - subtotal);
   const progress = Math.min(100, (subtotal / threshold) * 100);
@@ -193,6 +189,22 @@ export default function ThemePreview() {
     document.body.style.overflow = popupOpen || cartOpen || searchOpen || accountOpen || lightboxOpen || wishlistOpen || checkoutBundleOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [popupOpen, cartOpen, searchOpen, accountOpen, lightboxOpen, wishlistOpen, checkoutBundleOpen]);
+
+  // Deep-link entry: /preview?search=1 opens the search modal once and then
+  // strips the param from the URL so a refresh doesn't keep re-triggering it
+  // (and doesn't show the promo popup + search modal stacked on top of each
+  // other on first load).
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("search") === "1") {
+      setSearchOpen(true);
+      setPopupOpen(false);
+      params.delete("search");
+      const cleanUrl = window.location.pathname + (params.toString() ? `?${params}` : "") + window.location.hash;
+      window.history.replaceState({}, "", cleanUrl);
+    }
+  }, []);
 
   // Scroll-reveal animations — re-runs when the visible product set changes
   // so newly inserted cards are observed (and not stuck at opacity:0).
@@ -394,33 +406,10 @@ export default function ThemePreview() {
         </div>
       </section>
 
-      {/* DONATION IMPACT COUNTER */}
-      <section style={{ padding: "4rem 0", background: "linear-gradient(135deg, var(--color-secondary), #4ea3a7)", color: "#fff" }} data-testid="preview-donation">
-        <div className="container">
-          <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
-            <div style={{ display: "inline-block", fontFamily: "var(--font-heading)", fontSize: ".85rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".2em", color: "rgba(255,255,255,0.85)", marginBottom: "1rem" }}>Real Impact, Real Receipts</div>
-            <h2 style={{ color: "#fff", margin: "0 0 .75rem", fontSize: "clamp(1.85rem, 4vw, 3rem)" }}>Together, the pack has given <em>back</em></h2>
-            <p style={{ color: "rgba(255,255,255,0.9)", margin: 0, maxWidth: 620, marginLeft: "auto", marginRight: "auto" }}>Every order chips in. Here's the impact this community has made so far:</p>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "1.5rem", maxWidth: 920, margin: "0 auto 2.5rem" }} data-testid="impact-stats">
-            {[
-              { num: "$4,287", label: "Donated to rescues", testid: "impact-donated" },
-              { num: "12", label: "Rescues supported", testid: "impact-rescues" },
-              { num: "8,341", label: "Orders shipped", testid: "impact-orders" },
-              { num: "100%", label: "Receipts posted", testid: "impact-receipts" },
-            ].map((s) => (
-              <div key={s.label} style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(6px)", borderRadius: 24, padding: "1.75rem 1rem", textAlign: "center", border: "1px solid rgba(255,255,255,0.2)" }} data-testid={s.testid}>
-                <div style={{ fontFamily: "var(--font-heading)", fontWeight: 800, fontSize: "clamp(2rem, 4vw, 2.75rem)", lineHeight: 1, marginBottom: ".5rem" }}>{s.num}</div>
-                <div style={{ fontSize: ".9rem", color: "rgba(255,255,255,0.85)", textTransform: "uppercase", letterSpacing: ".1em", fontWeight: 600 }}>{s.label}</div>
-              </div>
-            ))}
-          </div>
-          <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
-            <a href="#giving-back" onClick={(e) => { e.preventDefault(); document.getElementById("giving-back")?.scrollIntoView({ behavior: "smooth" }); }} className="btn btn-light" data-testid="how-it-works-btn">How It Works</a>
-            <a href="https://instagram.com/shopmollyandsophie" target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ borderColor: "rgba(255,255,255,0.7)", color: "#fff" }} data-testid="see-receipts-btn">See the Receipts on IG</a>
-          </div>
-        </div>
-      </section>
+      {/* DONATION IMPACT COUNTER — removed per request: the company is brand
+          new and the placeholder stats ($4,287 donated / 12 rescues / 8,341
+          orders / 100% receipts) aren't real numbers yet. The "Giving Back"
+          section below explains the model without claiming any totals. */}
 
       {/* GIVING BACK SECTION */}
       <section id="giving-back" style={{ padding: "5rem 0", background: "var(--color-bg)" }} data-testid="giving-back" className="reveal">
@@ -490,7 +479,26 @@ export default function ThemePreview() {
           </div>
           <div style={{ textAlign: "center", marginTop: "2.5rem" }}>
             <p style={{ color: "rgba(31,41,55,0.7)", marginBottom: ".75rem" }}>Still have a question?</p>
-            <a href="mailto:support@mollyandsophie.com" className="btn btn-outline" data-testid="faq-contact-btn">Email Support</a>
+            <a
+              href="mailto:support@mollyandsophie.com"
+              className="btn btn-outline"
+              data-testid="faq-contact-btn"
+              onClick={(e) => {
+                // Fire a confirmation toast so the user gets visible feedback
+                // even if their browser has no default mail client configured.
+                // Copy the email to clipboard as a fallback so they can paste
+                // it into Gmail / Outlook web manually.
+                const email = "support@mollyandsophie.com";
+                try {
+                  if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(email).catch(() => {});
+                  }
+                } catch (_) { /* ignore clipboard failures */ }
+                showToast(`📧 ${email} (copied)`, "love");
+                // We do NOT preventDefault — let the browser still try the
+                // mailto: handler so users with a mail client get the prompt.
+              }}
+            >Email Support</a>
           </div>
         </div>
       </section>
@@ -825,7 +833,7 @@ export default function ThemePreview() {
                           <div onClick={() => { setWishlistOpen(false); window.scrollTo(0, 0); navigate(`/preview/product/${p.slug}`); }} style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: ".95rem", marginBottom: ".15rem", cursor: "pointer", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.name}</div>
                           <div style={{ fontSize: ".85rem", color: "var(--color-primary)", fontWeight: 800, fontFamily: "var(--font-heading)" }}>${p.price.toFixed(2)}</div>
                           <div style={{ display: "flex", gap: ".5rem", marginTop: ".4rem" }}>
-                            <button onClick={() => { addToCart(p); wishlist.remove(slug); showToast(`Added ${p.name} to cart`, "love"); }} style={{ background: "var(--color-secondary)", color: "#fff", border: "none", borderRadius: 999, padding: ".3rem .75rem", fontSize: ".75rem", fontWeight: 700, cursor: "pointer", fontFamily: "var(--font-heading)" }} data-testid={`wishlist-add-${slug}`}>+ Cart</button>
+                            <button onClick={() => { cartHook.add(p, 1); wishlist.remove(slug); showToast(`Added ${p.name} to cart 🛒`, "love"); }} style={{ background: "var(--color-secondary)", color: "#fff", border: "none", borderRadius: 999, padding: ".3rem .75rem", fontSize: ".75rem", fontWeight: 700, cursor: "pointer", fontFamily: "var(--font-heading)" }} data-testid={`wishlist-add-${slug}`}>+ Cart</button>
                             <button onClick={() => { wishlist.remove(slug); showToast(`Removed from wishlist`, "muted"); }} style={{ background: "transparent", color: "rgba(31,41,55,0.6)", border: "1.5px solid rgba(31,41,55,0.15)", borderRadius: 999, padding: ".3rem .75rem", fontSize: ".75rem", fontWeight: 700, cursor: "pointer", fontFamily: "var(--font-heading)" }} data-testid={`wishlist-remove-${slug}`}>Remove</button>
                           </div>
                         </div>
@@ -837,7 +845,7 @@ export default function ThemePreview() {
             </div>
             {wishlist.count > 0 && (
               <div style={{ padding: "1rem 1.5rem", borderTop: "2px solid rgba(31,41,55,0.08)", display: "flex", gap: ".75rem" }}>
-                <button onClick={() => { const moved = wishlist.slugs.length; wishlist.slugs.forEach((s) => { const p = PRODUCTS.find((x) => x.slug === s); if (p) addToCart(p); }); wishlist.clear(); setWishlistOpen(false); showToast(`Moved ${moved} item${moved === 1 ? "" : "s"} to cart`, "love"); }} className="btn btn-primary" style={{ flex: 1 }} data-testid="wishlist-move-all">Move all to cart</button>
+                <button onClick={() => { const moved = wishlist.slugs.length; wishlist.slugs.forEach((s) => { const p = PRODUCTS.find((x) => x.slug === s); if (p) cartHook.add(p, 1); }); wishlist.clear(); setWishlistOpen(false); showToast(`Moved ${moved} item${moved === 1 ? "" : "s"} to cart 🛒`, "love"); }} className="btn btn-primary" style={{ flex: 1 }} data-testid="wishlist-move-all">Move all to cart</button>
                 <button onClick={() => { wishlist.clear(); showToast("Wishlist cleared", "muted"); }} className="btn btn-outline" data-testid="wishlist-clear">Clear</button>
               </div>
             )}
@@ -910,7 +918,7 @@ export default function ThemePreview() {
 
             <button
               onClick={() => {
-                bundleUpsellItems.forEach((p) => addToCart(p));
+                bundleUpsellItems.forEach((p) => cartHook.add(p, 1));
                 setCheckoutBundleOpen(false);
                 setCartOpen(false);
                 showToast("Bundle added — proceeding to checkout (preview)", "love");
