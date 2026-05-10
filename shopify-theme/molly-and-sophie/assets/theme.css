@@ -599,6 +599,45 @@ p { margin: 0 0 1rem; }
 }
 .wishlist-toast.is-visible { transform: translateX(-50%) translateY(0); }
 
+/* ---- generic site-wide toast (cart-add confirmations, email-support copy, etc.) ---- */
+.app-toast {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background: var(--color-primary);
+  color: #fff;
+  padding: 0.85rem 1.25rem;
+  border-radius: 999px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.9rem;
+  z-index: 10003;
+  box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.25);
+  max-width: calc(100vw - 2rem);
+  opacity: 0;
+  transform: translateY(-12px);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.app-toast.is-visible { opacity: 1; transform: translateY(0); }
+.app-toast.is-muted { background: var(--color-text); color: var(--color-cream); }
+
+/* ---- Real Results graph (product page, below FAQ) ---- */
+.product-test-results { padding: 4rem 0; background: var(--color-bg); border-top: 1px dashed rgba(31,41,55,0.1); }
+.product-test-results-head { text-align: center; max-width: 720px; margin: 0 auto 2rem; }
+.product-test-results-eyebrow { display: inline-block; font-family: var(--font-heading); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: var(--color-secondary); margin-bottom: 0.75rem; }
+.product-test-results-title { font-size: clamp(1.5rem, 3vw, 2.25rem); margin: 0; }
+.product-test-results-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; max-width: 1080px; margin: 0 auto; align-items: center; }
+@media (min-width: 880px) { .product-test-results-grid { grid-template-columns: 1.4fr 1fr; gap: 2.5rem; } }
+.product-test-results-chart { background: #fff; border: 2px solid var(--color-secondary); border-radius: 18px; padding: 1.25rem; }
+.product-test-results-chart svg { width: 100%; height: auto; display: block; }
+.product-test-results-caption { text-align: center; margin-top: 0.5rem; font-size: 0.75rem; color: rgba(31,41,55,0.55); font-style: italic; }
+.product-test-results-copy h3 { font-size: 1.4rem; margin: 0 0 0.75rem; color: var(--color-primary); }
+.product-test-results-copy p { font-size: 1rem; line-height: 1.65; color: rgba(31,41,55,0.85); margin: 0 0 1rem; }
+.product-test-results-copy ul { list-style: none; padding: 0; margin: 0; }
+.product-test-results-copy li { padding: 0.4rem 0; display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.95rem; }
+.product-test-results-copy li span { color: var(--color-secondary); font-weight: 800; font-size: 1.1rem; line-height: 1.4; }
+
 /* ============ RESCUES SECTION ============ */
 .rescues {
   background: var(--color-cream);

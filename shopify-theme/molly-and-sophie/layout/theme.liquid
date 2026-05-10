@@ -99,6 +99,18 @@
     {% render 'promo-popup' %}
     {% render 'bundle-upsell-popup' %}
 
+    {%- comment -%}
+      Generic toast surface. theme.js's window.theme.toast(msg) writes its
+      text into this element and toggles .is-visible. Used by:
+        - Add-to-cart confirmation ("Added X to cart 🛒")
+        - Email Support button (email copied + opening client)
+        - Anything else that wants a quick top-of-screen notice.
+      The wishlist's own [data-wishlist-toast] still exists on the wishlist
+      page so wishlist drawer messages land there; everything else uses
+      this site-wide one.
+    {%- endcomment -%}
+    <div class="app-toast" data-app-toast role="status" aria-live="polite"></div>
+
     <ul hidden>
       <li id="a11y-refresh-page-message">{{ 'accessibility.refresh_page' | t }}</li>
       <li id="a11y-new-window-message">{{ 'accessibility.link_messages.new_window' | t }}</li>

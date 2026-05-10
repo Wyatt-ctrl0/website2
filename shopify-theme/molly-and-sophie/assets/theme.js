@@ -15,6 +15,44 @@
   function $(sel, ctx) { return (ctx || document).querySelector(sel); }
   function $$(sel, ctx) { return Array.from((ctx || document).querySelectorAll(sel)); }
 
+  // ---------- Site-wide toast ----------
+  // Shows a top-right notification using [data-app-toast] from layout/theme.liquid.
+  // Used by cart-add ("Added X to cart"), email-support copy, etc.
+  // For wishlist-drawer messages we still use Wishlist.toast() and the
+  // wishlist-page-scoped [data-wishlist-toast] element.
+  var _toastTimer;
+  function showToast(msg, opts) {
+    var el = $('[data-app-toast]');
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.toggle('is-muted', !!(opts && opts.muted));
+    el.classList.add('is-visible');
+    clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(function() { el.classList.remove('is-visible'); }, (opts && opts.duration) || 2400);
+  }
+  // Expose so inline Liquid handlers can call it (e.g. mailto button onclick).
+  window.theme = window.theme || {};
+  window.theme.toast = showToast;
+
+  // Delegated handler for any anchor with [data-app-mailto="…"]. We keep the
+  // mailto: href so users WITH a default mail client still get the standard
+  // prompt, but we ALSO copy the address to the clipboard and surface a
+  // toast — so users without a mail client get visible feedback instead of
+  // a button that looks dead.
+  document.addEventListener('click', function(e) {
+    var trigger = e.target.closest && e.target.closest('[data-app-mailto]');
+    if (!trigger) return;
+    var addr = trigger.getAttribute('data-app-mailto');
+    if (!addr) return;
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(addr).catch(function() {});
+      }
+    } catch (_) { /* clipboard blocked — fine */ }
+    showToast('📧 ' + addr + ' (copied)');
+    // Don't preventDefault — let the browser still try the mailto: handler.
+  });
+
   // ---------- Cart Store ----------
   var Cart = {
     state: { item_count: 0, total_price: 0, items: [], note: '' },
@@ -103,8 +141,17 @@
       if (e.key === 'Escape') close();
     });
 
-    // Listen for add-to-cart events
-    document.addEventListener('cart:added', open);
+    // Listen for add-to-cart events.
+    // Old behavior: auto-open the cart drawer the moment something was added.
+    // New behavior: keep the drawer closed and surface a top-right toast so
+    // the customer can keep shopping. They open the cart themselves via the
+    // cart icon (which always shows the live item count).
+    document.addEventListener('cart:added', function(e) {
+      // Refresh the cart state (powers the count badge + drawer if opened later).
+      Cart.fetch();
+      var name = (e && e.detail && e.detail.product_title) || (e && e.detail && e.detail.title) || 'Item';
+      showToast('Added ' + name + ' to cart 🛒');
+    });
   }
 
   // ---------- Cart Renderer ----------
@@ -647,13 +694,15 @@
           body: formData
         })
           .then(function(r) { return r.json(); })
-          .then(function() {
-            return Cart.fetch();
+          .then(function(added) {
+            // Pass the product info through to the cart:added listener so
+            // the toast can name the item ("Added Salmon Soft Treats to cart").
+            return Cart.fetch().then(function() { return added; });
           })
-          .then(function() {
+          .then(function(added) {
             if (btn) { btn.disabled = false; btn.textContent = '✓ Added!'; }
             setTimeout(function() { if (btn) btn.textContent = originalText; }, 1500);
-            document.dispatchEvent(new CustomEvent('cart:added'));
+            document.dispatchEvent(new CustomEvent('cart:added', { detail: added || {} }));
           })
           .catch(function() {
             if (btn) { btn.disabled = false; btn.textContent = originalText; }
