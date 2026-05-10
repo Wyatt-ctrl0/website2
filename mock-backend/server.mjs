@@ -69,11 +69,56 @@ const server = http.createServer(async (req, res) => {
     return res.end();
   }
 
-  if (method === 'GET' && pathname === '/api/') {
+  // HEAD = same routing as GET, no body. Lets the launch panel / curl -I work.
+  const effectiveMethod = method === 'HEAD' ? 'GET' : method;
+
+  // Friendly status page at / so the launch-panel preview isn't a blank 404.
+  if (effectiveMethod === 'GET' && (pathname === '/' || pathname === '/index.html')) {
+    setCors(res);
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    if (method === 'HEAD') return res.end();
+    const themeFolderOk = fs.existsSync(THEME_FOLDER);
+    const themeZipOk = fs.existsSync(THEME_ZIP);
+    return res.end(`<!doctype html>
+<html><head><meta charset="utf-8"><title>mock-backend · Molly & Sophie</title>
+<style>
+  body{font:14px/1.55 system-ui,sans-serif;background:#FDF8EE;color:#1F2937;margin:0;padding:2rem;max-width:760px}
+  h1{font-family:Georgia,serif;color:#E8765A;margin:0 0 .25rem}
+  h2{font-size:1rem;text-transform:uppercase;letter-spacing:.1em;color:#5FB4B8;margin:2rem 0 .5rem}
+  code{background:#F5EBD8;padding:.15rem .4rem;border-radius:4px}
+  table{border-collapse:collapse;width:100%;margin-top:.25rem}
+  td{padding:.4rem .6rem;border-bottom:1px solid rgba(0,0,0,.08);vertical-align:top}
+  td:first-child{font-weight:700;color:#5FB4B8;width:14rem}
+  .ok{color:#2c7a4f;font-weight:700}
+  .bad{color:#c0392b;font-weight:700}
+  a{color:#E8765A;font-weight:700}
+</style></head><body>
+<h1>🐾 mock-backend</h1>
+<div>Node mock of the FastAPI <code>website2/backend</code> server. Running on port <code>${PORT}</code>.</div>
+<h2>Health</h2>
+<table>
+  <tr><td>Theme folder</td><td>${themeFolderOk ? '<span class=ok>✓ found</span>' : '<span class=bad>✗ missing</span>'} · <code>${THEME_FOLDER}</code></td></tr>
+  <tr><td>Theme zip</td><td>${themeZipOk ? '<span class=ok>✓ found</span>' : '<span class=bad>✗ missing</span>'} · <code>${THEME_ZIP}</code></td></tr>
+</table>
+<h2>Endpoints</h2>
+<table>
+  <tr><td>GET /api/</td><td>health · <a href="/api/">try</a></td></tr>
+  <tr><td>GET /api/theme/info</td><td>theme metadata · <a href="/api/theme/info">try</a></td></tr>
+  <tr><td>GET /api/theme/download</td><td>streams the .zip · <a href="/api/theme/download">try</a></td></tr>
+  <tr><td>POST /api/theme/rebuild</td><td>no-op (returns size of existing zip)</td></tr>
+  <tr><td>POST /api/contact</td><td>logs to stdout, returns id</td></tr>
+  <tr><td>POST /api/newsletter</td><td>logs to stdout, returns id</td></tr>
+</table>
+<h2>This isn't the website</h2>
+<div>This server only serves JSON / file downloads. The actual UI is the React app on <a href="http://localhost:3001/">port 3001</a>, which fetches from this server.</div>
+</body></html>`);
+  }
+
+  if (effectiveMethod === 'GET' && pathname === '/api/') {
     return json(res, 200, { message: 'Molly & Sophie Shopify Theme Builder (mock)' });
   }
 
-  if (method === 'GET' && pathname === '/api/theme/info') {
+  if (effectiveMethod === 'GET' && pathname === '/api/theme/info') {
     const sizeKb = fs.existsSync(THEME_ZIP)
       ? Math.max(1, Math.floor(fs.statSync(THEME_ZIP).size / 1024))
       : 48;
@@ -86,7 +131,7 @@ const server = http.createServer(async (req, res) => {
     });
   }
 
-  if (method === 'GET' && pathname === '/api/theme/download') {
+  if (effectiveMethod === 'GET' && pathname === '/api/theme/download') {
     if (!fs.existsSync(THEME_ZIP)) {
       return json(res, 404, { detail: 'Theme zip not found at ' + THEME_ZIP });
     }
