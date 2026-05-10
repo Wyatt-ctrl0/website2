@@ -67,7 +67,19 @@ export default function ThemePreview() {
   const [searchQuery, setSearchQuery] = useState("");
   const [accountOpen, setAccountOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState("all");
-  const [popupOpen, setPopupOpen] = useState(true);
+  // Promo popup: show once per visitor and never again. The "seen" flag
+  // lives in localStorage so navigating to a product page and back, or
+  // refreshing, doesn't re-pester them.
+  const PROMO_SEEN_KEY = "ms_promo_seen_v1";
+  const [popupOpen, setPopupOpen] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try { return localStorage.getItem(PROMO_SEEN_KEY) !== "1"; }
+    catch (_) { return true; }
+  });
+  const dismissPromo = () => {
+    setPopupOpen(false);
+    try { localStorage.setItem(PROMO_SEEN_KEY, "1"); } catch (_) {}
+  };
   const cartHook = useCart();
   const cart = cartHook.items;
   const updateQty = cartHook.updateQty;
@@ -687,7 +699,7 @@ export default function ThemePreview() {
       {popupOpen && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }} data-testid="promo-popup">
           <div style={{ background: "var(--color-bg)", borderRadius: 32, maxWidth: 880, width: "100%", display: "grid", gridTemplateColumns: "1fr", overflow: "hidden", position: "relative", maxHeight: "92vh", overflowY: "auto" }} className="popup-grid-md">
-            <button onClick={() => setPopupOpen(false)} style={{ position: "absolute", top: "1rem", right: "1rem", width: 40, height: 40, borderRadius: "50%", background: "rgba(255,255,255,0.9)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 5, border: "none", cursor: "pointer" }} data-testid="popup-close">
+            <button onClick={dismissPromo} style={{ position: "absolute", top: "1rem", right: "1rem", width: 40, height: 40, borderRadius: "50%", background: "rgba(255,255,255,0.9)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 5, border: "none", cursor: "pointer" }} data-testid="popup-close">
               <X size={20} />
             </button>
             <div className="popup-hero" style={{ background: "var(--color-mint)", display: "flex", alignItems: "center", justifyContent: "center", padding: "1.75rem", minHeight: 280, position: "relative", overflow: "hidden" }}>
@@ -714,7 +726,7 @@ export default function ThemePreview() {
               <div style={{ background: "var(--color-cream)", border: "2px dashed var(--color-primary)", padding: "1rem", borderRadius: 12, margin: "1.5rem 0", fontFamily: "var(--font-heading)", fontWeight: 800, fontSize: "1.5rem", letterSpacing: ".15em", color: "var(--color-primary)" }}>WELCOME10</div>
               <p style={{ fontSize: ".85rem", color: "rgba(31,41,55,0.55)", marginBottom: "1rem" }}>Valid on orders $50+. Apply at checkout.</p>
               <button onClick={copyCode} className="btn btn-primary btn-block" data-testid="popup-copy">{codeCopied ? "✓ Copied!" : "Copy Code"}</button>
-              <button onClick={() => setPopupOpen(false)} className="btn btn-outline btn-block" style={{ marginTop: ".75rem" }}>Start Shopping</button>
+              <button onClick={dismissPromo} className="btn btn-outline btn-block" style={{ marginTop: ".75rem" }}>Start Shopping</button>
             </div>
           </div>
         </div>
