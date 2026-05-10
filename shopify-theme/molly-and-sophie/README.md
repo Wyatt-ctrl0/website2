@@ -34,6 +34,8 @@ All editable in **Online Store → Themes → Customize → Theme Settings → B
 4. Click **"Add theme" → "Upload zip file"**
 5. Upload this zip and click **"Publish"** when ready
 
+> ⚠️ **If `Preview` looks broken right after upload**, that's expected — Shopify renders the theme using YOUR store's data, and a fresh import has no products, no pages, and no theme settings configured yet. Walk through the **Setup After Install** checklist below; pieces like the wishlist tab, the Contact tab in the footer, and "How It Works" links only resolve once their corresponding Shopify pages exist.
+
 ## Setup After Install
 
 1. **Customize → Theme settings**
@@ -44,11 +46,19 @@ All editable in **Online Store → Themes → Customize → Theme Settings → B
    - Enable/disable the **welcome promo popup** + customize text/code
    - Add your **Instagram / Facebook / TikTok** URLs
 
-2. **Pages** — Create these pages in Shopify (Online Store → Pages):
-   - `about` (uses About template)
-   - `contact` (uses Contact template)
-   - `thank-you` (uses Thank You template — link this from your Order Status page)
-   - `returns`, `shipping-info`, `order-lookup`, `help` (regular pages)
+2. **Pages** — Create these in Shopify (Online Store → Pages → Add page). For each one, set the **Theme template** field on the right side of the editor to the matching template:
+
+   | Page handle | Template to assign | What it powers |
+   |---|---|---|
+   | `about` | `page.about` | Header "Our Story" link, footer "Our Story" link |
+   | `contact` | `page.contact` | Header **Contact** link, footer **Contact Us** link |
+   | `thank-you` | `page.thank-you` | Custom thank-you page after checkout |
+   | `wishlist` | `page.wishlist` | The **Wishlist** tab in the header — without this page the icon's link 404s |
+   | `jack` / `sophie` / `molly` | `page.jack` / `page.sophie` / `page.molly` | "Read [name]'s story" links from Meet the Pack |
+   | `giving-back` | (default) | The **"How It Works"** button on the homepage Donation Banner |
+   | `returns` / `shipping-info` / `order-lookup` / `help` | (default) | Footer Customer Care links |
+
+   Page handle = the URL slug. Title can be whatever you want; Shopify derives the handle from the title automatically.
 
 3. **Discounts** — Create matching discount codes in Shopify (Discounts → Create):
    - `WELCOME10` — 10% off, minimum order $50
@@ -57,6 +67,16 @@ All editable in **Online Store → Themes → Customize → Theme Settings → B
 4. **Klaviyo** — In Theme Settings or via the Klaviyo Shopify app, replace the newsletter form with your Klaviyo signup embed.
 
 5. **Order Status Page** — Go to **Settings → Checkout → Order status page** and add a redirect/link to `/pages/thank-you` after successful purchase.
+
+6. **Sale prices** — To show a struck-through "compare-at" price + the **Save $X** pill on a product, set the **Compare-at price** field on the product variant (or set it on the product itself for single-variant products). The placeholder demo on a fresh store shows two products with sample compare-at prices so you can see the layout.
+
+## Troubleshooting
+
+- **"Wishlist" icon in the header takes me to a 404.** Create a page with handle `wishlist` and assign the `page.wishlist` template (see step 2 above). The wishlist itself works without this page — it persists in the visitor's browser via localStorage — but the dedicated Wishlist *page* needs the page to exist.
+- **"Contact" link goes to a 404.** Create a page with handle `contact` and assign the `page.contact` template.
+- **"How It Works" button goes to a 404.** Create a page with handle `giving-back` (any plain Shopify page is fine — explain how the 1% donation works in your own words).
+- **No sale prices showing.** Set a **Compare-at price** on at least one product variant; the theme will then render the struck-through original + Save pill automatically.
+- **Header logo missing.** Either upload your logo in **Customize → Theme settings → Branding**, or rely on the bundled `assets/logo.png` fallback (which the theme uses out of the box).
 
 ## Theme Structure
 

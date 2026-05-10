@@ -49,6 +49,15 @@
       },
       "block_order": ["jack","sophie","molly"]
     },
+    "donation-banner": {
+      "type": "donation-banner",
+      "settings": {
+        "heading": "1% of every order. Donated monthly. To rescues we love.",
+        "subheading": "We are not affiliated with any single charity — every month we hand-pick a trusted pet rescue and donate 1% of our orders directly to them. Real animals. Real impact.",
+        "button_text": "How It Works",
+        "button_link": "/pages/giving-back"
+      }
+    },
     "testimonials": {
       "type": "testimonials",
       "blocks": {
@@ -97,5 +106,5 @@
       "block_order": ["p1","p2","p3","p4","p5","p6"]
     }
   },
-  "order": ["hero","trust-strip","categories","featured","rescues","testimonials","faq","instagram-feed"]
+  "order": ["hero","trust-strip","categories","featured","rescues","donation-banner","testimonials","faq","instagram-feed"]
 }
